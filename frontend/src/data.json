@@ -1,0 +1,30 @@
+{
+    "DoctorHistoryTableHead": [
+        "Facility",
+        "Start Date",
+        "End Date",
+        "Action"
+    ],
+    "PatientsTableHead": [
+        "name",
+        "Identification Number",
+        "phone No",
+        "gender",
+        "Age",
+        "Next Visit "
+    ],
+    "TriageTableHead": [
+        "name",
+        "Blood Pressure ",
+        "weight",
+        "temperature",
+        "height"
+    ],
+    "PatientHistoryTableHead": [
+        "Date",
+        "Department",
+        "Doctor", "treatment"
+
+
+    ]
+}
