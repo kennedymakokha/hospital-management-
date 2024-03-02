@@ -5,6 +5,7 @@ import { useLoginMutation, useRegisterMutation, } from './features/slices/usersA
 import { setCredentials } from './features/slices/authSlice';
 import logo from './assets/logibg.png';
 import { toast } from 'react-toastify';
+import logo1 from  './assets/blood.gif'
 function Auth(props) {
     const [showpass, setShowpass] = useState(false)
     const [reg, setReg] = useState(false)
@@ -27,7 +28,7 @@ function Auth(props) {
     })
     const changeInput = async (e) => {
         const { name, value } = e.target
-        console.log(value)
+       
         setUser((prevState) => ({
             ...prevState,
             [name]: value,
@@ -46,11 +47,11 @@ function Auth(props) {
                 const res = await register(user).unwrap();
                 setReg(!reg)
                 toast.success('User Created succesfully ')
-            
+
             }
         } catch (error) {
             toast.error(error?.data?.message || error.message)
-           
+
         }
 
     }
@@ -200,7 +201,9 @@ function Auth(props) {
                                     </div>
 
                                 </div>
-                                <div className='w-1/2 h-full sm:flex hidden  '></div>
+                                <div className='w-1/2 h-full sm:flex hidden  items-center justify-center p-3 '>
+                                <img src={logo1} className='w-full h-full' alt="" />
+                                </div>
                             </div>
 
                         </div>

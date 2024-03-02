@@ -1,0 +1,34 @@
+{
+    "Dashboard": [
+        "Dr",
+        "Admin"
+    ],
+    "appointments": [
+        "Dr",
+        "Admin",
+        "patient"
+    ],
+    "consultation": [
+        "Lab_tech",
+        "Dr"
+    ],
+    "accounts": [
+        "Acc",
+        "Admin"
+    ],
+    "triage": [
+        "Nurse"
+    ],
+    "lab": [
+        "Lab_tech",
+        "Admin",
+        "Nurse"
+    ],
+    "patients": [
+        "Dr",
+        "Lab_tech",
+        "Admin",
+        "Nurse",
+        "Acc"
+    ]
+}

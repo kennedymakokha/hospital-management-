@@ -49,7 +49,7 @@ function Auth() {
                                 <path strokeLinecap="round" strokeLinejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
                             </svg>
                                 <span className='font-semibold text-slate-100'>Support</span>
-                            </div> 
+                            </div>
                         </div>
                         <div className='w-full flex flex-row   h-[90%]  rounded-b-[25px]  '>
                             <div className='w-full h-full flex  rounded-b-[25px]'>
@@ -61,14 +61,16 @@ function Auth() {
                                         <InputItem value={user.password} name="password" type="password" label="Password" placeholder="password" />
                                         <InputItem value={user.confirmpassword} name="confirmpassword" type="password" label="Confirm password" placeholder="ReEnter Password" />
                                         <div className='w-full flex items-center justify-center '>
-                                            <div onClick={()=>console.log(user)} className='w-1/2 h-10 shadow-3xl items-center justify-center flex rounded-md  bg-blue-300 hover:bg-slate-300 my-5'>
+                                            <div onClick={() => console.log(user)} className='w-1/2 h-10 shadow-3xl items-center justify-center flex rounded-md  bg-blue-300 hover:bg-slate-300 my-5'>
                                                 <span className='text-xl font-semibold uppercase'>Login</span>
                                             </div>
                                         </div>
                                     </div>
 
                                 </div>
-                                <div className='w-1/2 h-full sm:flex hidden  '></div>
+                                <div className='w-1/2 h-full sm:flex hidden  '>
+                                    <span className='text-7xl font-bold text-slare-500'>Text</span>
+                                                               </div>
                             </div>
 
                         </div>

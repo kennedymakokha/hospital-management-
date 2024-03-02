@@ -24,7 +24,11 @@
         "Date",
         "Department",
         "Doctor", "treatment"
-
-
+    ],
+    "LabTableHead": [
+        "Date",
+        "Patient",
+        "Results"
     ]
+    
 }

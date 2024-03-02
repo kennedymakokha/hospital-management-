@@ -89,7 +89,8 @@ function Patients() {
                                     <div className="flex items-center">
 
                                         <Link
-                                            to={`/patients-details/${person.firstName}`} state={{ details: person }}
+                                            to={`/patients/${person.firstName.replace(/\s+/g, '')
+                                        }`} state={{ details: person }}
 
                                         >
                                             <div className="ml-4">

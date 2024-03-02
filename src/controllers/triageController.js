@@ -26,7 +26,6 @@ const registerTry = expressAsyncHandler(async (req, res) => {
 const getTryID = expressAsyncHandler(async (req, res) => {
 
     const user = await Triage.find({ user_id: req.params.id })
-    console.log(user[user.length - 1])
     res.status(200).json(user[user.length - 1])
 })
 const getTriesByID = expressAsyncHandler(async (req, res) => {

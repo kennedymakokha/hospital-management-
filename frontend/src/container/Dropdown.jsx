@@ -7,7 +7,7 @@ export default function DropdownComponent(props) {
     <div className="inline-flex bg-white  ">
       <div
         href="#"
-        className="px-4 py-2 text-sm text-gray-600 hover:text-gray-700 hover:bg-gray-50 rounded-l-md"
+        className="px-4 py-2 text-sm text-gray-600 capitalize hover:text-gray-700 hover:bg-gray-50 rounded-l-md"
       >
         {props.title}
       </div>

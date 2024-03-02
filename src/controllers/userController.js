@@ -6,13 +6,14 @@ import generateToken from "../utils/generateToken.js";
 
 const authUser = expressAsyncHandler(async (req, res) => {
     const { email, password } = req.body;
-    const user = await User.findOne({ email })
+    const user = await User.findOne({ email }).populate('role')
     if (user && (await user.matchPassword(password))) {
         generateToken(res, user._id)
         res.status(201).json({
             id: user._id,
             name: user.name,
-            email: user.email
+            email: user.email,
+            role: user?.role?.name
         })
     } else {
         res.status(401)
@@ -27,9 +28,7 @@ const registerUser = expressAsyncHandler(async (req, res) => {
         throw new Error('User Already Exists')
     }
 
-    let user = await User.create({
-        name, phone, email, password
-    })
+    let user = await User.create(req.body)
     if (user) {
         generateToken(res, user._id)
         res.status(201).json({

@@ -88,8 +88,8 @@ function Profile() {
                 </div>
                 <div className='w-2/3 h-[200px] bg-slate-100 inner-shadow shadow-xl rounded-md'>
                     <MetaDatacontainer title="Name" value={`${userInfo?.name}`} />
-                    <MetaDatacontainer title="Email" value={userInfo.email} />
-                    <MetaDatacontainer title="Phone" value={userInfo.phone} />
+                    <MetaDatacontainer title="Email" value={userInfo?.email} />
+                    <MetaDatacontainer title="Phone" value={userInfo?.phone} />
                 </div>
 
             </div>

@@ -51,13 +51,13 @@ class App extends Component {
 				type: this.props.type,
 				name: "diastolic(lower)",
 				showInLegend: true,
-				yValueFormatString: "#,##0 mm Hg",
+				yValueFormatString: this.props.title === "Blood Pressure" ? "#,##0 mm Hg" : this.props.title === "Temprature" ? `#,##0 C` : "#,##0 mg/dL (3.9 mmol/L)",
 				dataPoints: this.props.Data1
 			}, {
 				type: "line",
 				name: "systolic",
 				showInLegend: true,
-				yValueFormatString: "#,##0 mm Hg",
+				yValueFormatString: this.props.title === "Blood Pressure" ? "#,##0 mm Hg" : this.props.title === "Temprature" ? "#,##0 C" : "#,##0 mg/dL (3.9 mmol/L)",
 				dataPoints: this.props.Data2
 
 			}]
