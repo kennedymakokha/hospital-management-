@@ -1,5 +1,8 @@
 import expressAsyncHandler from "express-async-handler"
 import User from '../models/userModel.js'
+import Role from '../models/roleModel.js'
+import Duty from '../models/dutyrosterModel.js'
+import Station from '../models/stationsModel.js'
 import bcrypt from 'bcryptjs';
 import generateToken from "../utils/generateToken.js";
 
@@ -7,14 +10,25 @@ import generateToken from "../utils/generateToken.js";
 const authUser = expressAsyncHandler(async (req, res) => {
     const { email, password } = req.body;
     const user = await User.findOne({ email }).populate('role')
+
     if (user && (await user.matchPassword(password))) {
         generateToken(res, user._id)
+        await Duty.create({ token: req.body.token, user_id: user._id, role_id: user.role._id, start: Date(Date.now()) })
+        await User.findOneAndUpdate({ email }, { onduty: true }, { new: true, useFindAndModify: false })
+        let newTokens = user.tokens.push(req.body.token)
+
+        await User.findOneAndUpdate({ email }, { tokens: newTokens }, { new: true, useFindAndModify: false })
+
         res.status(201).json({
             id: user._id,
             name: user.name,
             email: user.email,
-            role: user?.role?.name
+            role: user?.role?.name,
+            onduty: user.onduty,
+            tokens: user.tokens
         })
+
+
     } else {
         res.status(401)
         throw new Error("Invalid email or password")
@@ -22,12 +36,14 @@ const authUser = expressAsyncHandler(async (req, res) => {
     res.status(200).json({ message: 'Auth User' })
 })
 const registerUser = expressAsyncHandler(async (req, res) => {
-    const { name, phone, email, password, confirm_password } = req.body
+    const { name, phone, email, password, roleName, confirm_password } = req.body
     const UserExists = await User.findOne({ email })
     if (UserExists) {
         throw new Error('User Already Exists')
     }
-
+    let role = await Role.findOne({ name: req.body.role })
+    req.body.role = role._id
+    req.body.createdBy = req.user._id
     let user = await User.create(req.body)
     if (user) {
         generateToken(res, user._id)
@@ -52,32 +68,58 @@ const getUserProfile = expressAsyncHandler(async (req, res) => {
     }
     res.status(200).json(user)
 })
-const logoutUser = expressAsyncHandler(async (req, res) => {
-    res.cookie('jwt', '', {
-        httpOnly: true,
-        expires: new Date(0)
-    })
-    res.status(200).json({ message: 'logged out  User' })
+const getUsers = expressAsyncHandler(async (req, res) => {
+    const users = await User.find({})
+        .populate('role', 'name')
+    res.status(200).json(users)
 })
+const getUser = expressAsyncHandler(async (req, res) => {
+    const user = await User.findById(req.params.id)
+        .populate('role', 'name').populate('station', 'name')
+    res.status(200).json(user)
+})
+const logoutUser = expressAsyncHandler(async (req, res) => {
+    try {
+        await Duty.findOneAndUpdate({ user_id: req.body.id }, { end: Date(Date.now()) }, { new: true, useFindAndModify: false })
+        await User.findOneAndUpdate({ _id: req.body.id }, { onduty: false }, { new: true, useFindAndModify: false })
+
+        const user = await User.findOne({ _id: req.body.id })
+        const index = user?.tokens.indexOf(req.body.token);
+        if (index > -1) { // only splice array when item is found
+            user?.tokens.splice(index, 1); // 2nd parameter means remove one item only
+        }
+        res.cookie('jwt', '', {
+            httpOnly: true,
+            expires: new Date(0)
+        })
+
+        res.status(200).json({ message: 'logged out  User' })
+    } catch (error) {
+        console.log(error)
+    }
+})
+
+const EditUserDetails = expressAsyncHandler(async (req, res) => {
+    try {
+        let assign = await User.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true, useFindAndModify: false })
+        if (req.body.station) {
+            await Station.create({
+                station_id: assign._id,
+                user_id: req.params.id
+            })
+        }
+        res.status(200).json({ message: ' successfully ', assign })
+    } catch (error) {
+        res.status(400).json({ message: ' failed ', error })
+    }
+})
+
 
 const updateUserProfile = expressAsyncHandler(async (req, res) => {
     const user = await User.findById(req.user._id)
     if (user) {
-        user.name = req.body.name || user.name
-        user.email = req.body.email || user.email
-        user.phone = req.body.phone || user.phone
-
-        if (req.body.password) {
-            user.password = req.body.password
-        }
-        const updatedUser = await user.save()
-
-        res.status(200).json({
-            _id: updatedUser._id,
-            email: updatedUser.email,
-            name: updatedUser.name,
-            phone: updatedUser.phone
-        })
+        let updatte = await User.findOneAndUpdate({ _id: user._id }, req.body, { new: true, useFindAndModify: false })
+        res.status(200).json({ message: 'Updated', updatte })
 
     } else {
         res.status(404);
@@ -87,5 +129,5 @@ const updateUserProfile = expressAsyncHandler(async (req, res) => {
 })
 
 export {
-    authUser, updateUserProfile, registerUser, logoutUser, getUserProfile
+    authUser, updateUserProfile, EditUserDetails, registerUser, getUser, getUsers, logoutUser, getUserProfile
 }

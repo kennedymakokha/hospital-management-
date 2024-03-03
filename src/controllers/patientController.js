@@ -1,6 +1,8 @@
 import expressAsyncHandler from "express-async-handler"
 import generateToken from "../utils/generateToken.js";
 import Patient from '../models/patientModel.js'
+import Visit from '../models/visitModel.js'
+import Doctor from '../models/userModel.js'
 
 const getPatients = expressAsyncHandler(async (req, res) => {
     try {
@@ -13,12 +15,21 @@ const getPatients = expressAsyncHandler(async (req, res) => {
 })
 const registerPatient = expressAsyncHandler(async (req, res) => {
     try {
-        const { name, phone, email, password, confirm_password,ID_no } = req.body
+        const { name, phone, email, password, doc, confirm_password, ID_no } = req.body
         const UserExists = await Patient.findOne({ ID_no })
+        let DoD
+        if (doc) {
+            DoD = await Doctor.findOne({ onduty:true, _id: doc })
+        } else {
+            DoD = await Doctor.findOne({ onduty:true })
+        }
         if (UserExists) {
             throw new Error('Patient Already Exists')
         }
-        await Patient.create(req.body)
+        const newPatient = await Patient.create(req.body)
+        await Visit.create({
+            doctor_id: DoD._id, user_id: newPatient._id
+        })
         res.status(200).json({ message: 'User Created' })
     } catch (error) {
         console.log(error)

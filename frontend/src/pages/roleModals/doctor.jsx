@@ -41,7 +41,7 @@ function DoctorModal(props) {
             title={item?._id !== undefined && item?._id !== null && item?._id !== "" ? `Edit ${item.firstName} ${item.lastName}` : "DR consultation Report "}
             body={
                 <form className="  rounded px-8 pt-2 pb-8 w-full">
-                    <div className='w-[70% mb-5'>
+                    <div className='w-[70%] mb-5'>
                         <TextArea className="bg-red-200"
                             required value={desc} type="text"
                              name="result" label="results" placeholder="results" onChange={e=>changeInput(e)} />

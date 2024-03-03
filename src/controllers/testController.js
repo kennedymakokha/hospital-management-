@@ -2,10 +2,24 @@ import expressAsyncHandler from "express-async-handler"
 import generateToken from "../utils/generateToken.js";
 import Test from '../models/diseaseModel.js'
 import Symptoms from '../models/symptomsModel.js'
+import admin from './../../index.js'
 
 const getTest = expressAsyncHandler(async (req, res) => {
     try {
         const tests = await Test.find({ deletedAt: null })
+        let payload = {
+            notification: {
+                title: "From Backend",
+                body: 'teaajc'
+            },
+            data: {
+                url: 'https://www.youtube.com'
+            },
+
+            tokens: ['eGMz1BYxVXXxtmwjj-pHGF:APA91bGEeQYsfsxGy9kCRbAtsJGb__bKDjnFWC-Zv7hcXKXh3MYjdM3yb51aRLxCBTXv1isqc-9hfEaImHKtNbp76bMZ_wPtcXgmK49ZoNuagHKJYUgA3MH6h7SjAMmrvx9yBA6VYvFg']
+            // token: 'eGMz1BYxVXXxtmwjj-pHGF:APA91bGEeQYsfsxGy9kCRbAtsJGb__bKDjnFWC-Zv7hcXKXh3MYjdM3yb51aRLxCBTXv1isqc-9hfEaImHKtNbp76bMZ_wPtcXgmK49ZoNuagHKJYUgA3MH6h7SjAMmrvx9yBA6VYvFg'
+        }
+        admin.messaging().sendEachForMulticast(payload)
         res.status(200).json(tests)
     } catch (error) {
         res.status(404);

@@ -1,10 +1,10 @@
 export const SelectOptions = (data) => {
   const { array, name, } = data
 
-  let t = array.map((item, i) => (
+  let t = array?.map((item, i) => (
     {
       key: i,
-      value: item.id,
+      value: item.id ? item.id : item._id,
       other: item.target ? item.target : null,
       label: item.title ? item.title : item.name,
       name: name
@@ -15,7 +15,7 @@ export const SelectOptions = (data) => {
 
 export const SelectPatientsFromAPI = (data) => {
   const { array, name, } = data
- 
+
   let t = array.map((item, i) => (
     {
       key: i,
@@ -27,9 +27,9 @@ export const SelectPatientsFromAPI = (data) => {
   return t
 }
 export const validPressureValue = (value) => {
-  
+
   if (value.length === 6 && !value.includes('/')) {
-      return toast.error("Kindly input the valid pressure value")
+    return toast.error("Kindly input the valid pressure value")
   }
 }
 export const callAPI = (value) => {
@@ -51,3 +51,16 @@ export function _calculateAge(dateString) {
   }
   return age;
 }
+
+export const DaysOfTheWeek = (props) => {
+  let days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+
+  days.forEach((day, index) => {
+    // Check if the index of day value is equal to the returned value of getDay()
+    if (index == new Date().getDay()) {
+      return day
+    }
+  }
+  )
+}
+

@@ -11,6 +11,7 @@ const TriageSchema = new Schema({
     bloodSugar: { type: String },
     weight: { type: String },
     user_id: { type: Schema.Types.ObjectId, ref: 'patient' },
+    visit_id: { type: Schema.Types.ObjectId, ref: 'visit' },
     deletedAt: { type: Date, default: null },
 }, { timestamps: true });
 const triage = mongoose.model('triage', TriageSchema);

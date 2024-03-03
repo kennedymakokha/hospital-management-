@@ -1,5 +1,6 @@
 import React from 'react'
 import underline from './../assets/underline.png'
+import { ButtonSM } from './Button'
 
 function TitleContainer(props) {
     return (
@@ -28,6 +29,17 @@ export const TriageItem = (props) => {
          bg-white inner-shadow shadow-sm rounded-md`}>
                 <p className='font-bold text-sm '>{props.symbol === 'mm Hg' ? <>{props.lowerValue}/{props.upperValue}</> : props.value} {props.symbol}</p>
                 <h2 className='text-center text-slate-500 capitalize text-sm  font-bold'>{props.title}</h2>
+            </div>
+        </div >)
+}
+export const UserItem = (props) => {
+
+    return (
+        <div className='w-1/4 px-1 flex-col flex h-full shadow-xl'>
+            <div className={`w-full h-[100px] flex items-center justify-center  flex-col  bg-white inner-shadow shadow-sm rounded-md`}>
+                <h2 className='text-center text-slate-500 capitalize text-sm  font-bold'>{props.title}</h2>
+                <p className='font-bold text-sm '> {props.value}</p>
+                <ButtonSM  onClick={props.onClick} primary title={props.buttontitle} />
             </div>
         </div >)
 }

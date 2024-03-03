@@ -9,6 +9,7 @@ import DocHistoryRoute from './routes/dochistoryRoutes.js'
 import roleRoute from './routes/roleRoutes.js'
 import triageRoute from './routes/triageRoutes.js'
 import testRoute from './routes/testRoutes.js'
+import stationRoute from './routes/stationRoutes.js'
 import { errorHandler, notFound } from './middlewere/errorMiddleware.js'
 import cookieParser from 'cookie-parser'
 import Lab from '../iolab.js'
@@ -27,6 +28,7 @@ app.use('/api/patients', patientRoutes)
 app.use('/api/triage', triageRoute)
 app.use('/api/roles', roleRoute)
 app.use('/api/test', testRoute)
+app.use('/api/stations', stationRoute)
 app.get('/', (req, res) => res.send("Server started"))
 app.use(notFound);
 app.use(errorHandler);

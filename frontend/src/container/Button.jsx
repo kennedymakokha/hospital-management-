@@ -19,7 +19,7 @@ export function ButtonSM(props) {
     return (
         <div
             onClick={props.onClick}
-            className={` w-10 h-5
+            className={`  h-5
          ${props.primary && "bg-[#007bff]"}
          ${props.secondary && "bg-[#6c757d]"}
          ${props.danger && "bg-[#dc3545]"}

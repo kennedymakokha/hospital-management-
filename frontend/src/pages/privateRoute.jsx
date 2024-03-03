@@ -13,13 +13,17 @@ import { Navigate, Outlet, useNavigate } from 'react-router-dom'
 
 // }
 
-const ProtectedRoute = ({ children }) => {
+const ProtectedRoute = ({ children, roles }) => {
     const { userInfo } = useSelector(state => state.auth)
     const navigate = useNavigate()
     useEffect(() => {
         if (!userInfo) {
             navigate("/");
         }
+        if (!roles.includes(userInfo.role)) {
+            navigate("/403");
+        }
+
     }, [userInfo])
 
     return (<>{children}</>)

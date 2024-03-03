@@ -17,6 +17,7 @@ import TitleContainer, { MetaDatacontainer, TriageItem } from '../container/titl
 import { useGetsymptomsByPatientQuery } from '../features/slices/symptomsSlice.jsx';
 import DoctorModal from './roleModals/doctor.jsx';
 import { useSelector } from 'react-redux';
+import Tab, { TabContainer } from '../container/tabs.jsx';
 
 
 
@@ -54,18 +55,7 @@ function PatientDetails() {
     bloodPressure()
 
 
-    const TabContainer = (props) => {
-        return (<>
-            {props.tab.title === props.tab1 && props.tab.state && <>
-                <div className=' p-1 py-3'>
-                    <TitleContainer title={props.title} />
-                    {props.body}
-                </div>
-            </>}
-        </>
-        )
 
-    }
     const handleTab = (title) => {
         let newTab = []
         tabs.forEach(tab => {
@@ -104,7 +94,7 @@ function PatientDetails() {
                         <MetaDatacontainer title="Email" value={details.email} />
                     </div>
                     <div className='float-bottom'>
-                        {userInfo.role === "Dr" ? <Button  secondary title="add" onClick={() => { setShow(true) }}  /> : null}
+                        {userInfo.role === "Dr" ? <Button secondary title="add" onClick={() => { setShow(true) }} /> : null}
                     </div>
 
                 </div>
@@ -122,19 +112,10 @@ function PatientDetails() {
                 </div>
 
             </div>
-            <div className='p-1 mb-4'>
-                <div className='flex h-10 gap-x-1 w-full bg-slate-100 border'>
-                    {tabs.map((menu, i) => (
-                        <div key={i} className={`h-full w-1/2 rounded-md  text-slate-100 `}>
-                            <div onClick={() => handleTab(menu.title)} className={`h-full capitalize  text-[15px] rounded-md w-full p-1 drop-shadow-md flex items-center justify-center  ${menu.state === true ? "bg-slate-500" : "bg-slate-600"} `}>
-                                {menu.title}
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </div>
+            
+            <Tab data={tabs} onChange={handleTab} />
             {tabs.map((tab, i) => (
-                <div>
+                <div key={i}>
                     <TabContainer title="Statistics" tab={tab} tab1="statistics"
                         body={<div className='w-full flex h-[400px]  '>
                             <div className='h-1/3 w-1/3 p-1'>

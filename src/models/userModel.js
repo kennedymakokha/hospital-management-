@@ -5,9 +5,16 @@ const Schema = mongoose.Schema;
 const UserSchema = new Schema({
     name: { type: String, required: true },
     phone: { type: String, required: true },
+    ID_no: { type: String, required: true },
+    off_day: { type: String },
+    tokens: [{ type: String }],
     role: { type: Schema.Types.ObjectId, ref: 'role' },
+    createdBy: { type: Schema.Types.ObjectId, ref: 'user' },
+    updatedBy: { type: Schema.Types.ObjectId, ref: 'user' },
+    station: { type: Schema.Types.ObjectId, ref: 'station' },
     email: { type: String, unique: true, required: true },
     activated: { type: Boolean, default: false },
+    onduty: { type: Boolean, default: false },
     verification_code: { type: String, },
     password: { type: String, required: true },
 
