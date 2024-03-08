@@ -49,7 +49,7 @@ function DoctorModal(props) {
                     <div className='flex w-full '>
                         <div className='flex flex-wrap gap-x-1'>
                             {newData?.map((test, index) => (
-                                <div key={test.id} onClick={() => _pickTest(index)} className={`px-4  border border-2 rounded-full text-[10px]  ${test.state === true ? "text-slate-100" : "text-slate-600"}  ${test.state === true ? "bg-slate-600" : "bg-slate-100"} border-slate-600`}>{test.name}</div>
+                                <div key={test.id} onClick={() => _pickTest(index)} className={`px-4  border border-2 rounded-full text-[10px]  ${test.state === true ? "text-slate-100" : "text-slate-600"}  ${test.state === true ? "bg-primary-100" : "bg-slate-100"} border-slate-600`}>{test.name}</div>
                             ))}
                         </div>
                     </div>

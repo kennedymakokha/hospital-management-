@@ -10,7 +10,7 @@ const TriageSchema = new Schema({
     height: { type: String },
     bloodSugar: { type: String },
     weight: { type: String },
-    user_id: { type: Schema.Types.ObjectId, ref: 'patient' },
+    user_id: { type: Schema.Types.ObjectId, ref: 'user' },
     visit_id: { type: Schema.Types.ObjectId, ref: 'visit' },
     deletedAt: { type: Date, default: null },
 }, { timestamps: true });

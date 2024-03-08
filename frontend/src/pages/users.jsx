@@ -28,7 +28,7 @@ function Users() {
     const { data, refetch, isFetching } = useGetusersQuery({})
     let users = []
     if (filter !== "") {
-        users = data?.filter(word => word.role.name === filter)
+        users = data?.filter(word => word?.role?.name === filter)
     } else { users = data }
     const [createUser] = useRegisterMutation();
     const [updatePatient] = useUpdatePatientMutation();
@@ -109,8 +109,12 @@ function Users() {
 
     return (
         <Layout>
+
             <TableContainer isFetching={isFetching}>
-                <TableTitle tableTitle="patients " />
+                <div className='flex items-center justify-center'>
+                    <TableTitle tableTitle={filter === "" ? " All system users" : filter} />
+                </div>
+
                 <Tab data={tabs} onChange={handleTab} />
                 <div className='flex align-end float-right m-2 '> <Button
                     icon={<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
@@ -145,9 +149,9 @@ function Users() {
 
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
-                                    <span
+                                <span
                                         className="px-2 inline-flex text-xs leading-5
-      font-semibold rounded-full bg-green-100 text-green-800"
+      font-semibold rounded-full "
                                     >
                                         {person?.phone}
                                     </span>
@@ -155,7 +159,7 @@ function Users() {
                                 <td className="px-6 py-4 whitespace-nowrap">
                                     <span
                                         className="px-2 inline-flex text-xs leading-5
-      font-semibold rounded-full bg-green-100 text-green-800"
+      font-semibold rounded-full "
                                     >
                                         {person?.gender}
                                     </span>
@@ -163,7 +167,7 @@ function Users() {
                                 <td className="px-6 py-4 whitespace-nowrap">
                                     <span
                                         className="px-2 inline-flex text-xs leading-5
-      font-semibold rounded-full bg-green-100 text-green-800"
+      font-semibold rounded-full "
                                     >
                                         {person?.dob}
                                     </span>

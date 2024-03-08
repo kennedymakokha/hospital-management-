@@ -8,7 +8,9 @@ const protect = expressAsyncHandler(async (req, res, next) => {
     if (token) {
         try {
             const decoded = jwt.verify(token, process.env.JWT_SECRET)
+           
             req.user = await User.findById(decoded.userId).select('-password')
+           
             next()
         } catch (error) {
             res.status(401)
@@ -20,5 +22,27 @@ const protect = expressAsyncHandler(async (req, res, next) => {
         throw new Error("Unauthorized access- NO TOKEN")
     }
 })
+const isAuth = (req, res, next) => {
+    const authorization = req.headers.authorization;
+    if (authorization) {
+        const token = authorization.slice(7, authorization.length); // Bearer XXXXXX
+        jwt.verify(
+            token,
+            process.env.JWT_SECRET || 'somethingsecret',
+            (err, decode) => {
+                if (err) {
+                    res.status(401).send({ message: 'NOT AUTHORIZED !!!' });
+                } else {
+                    req.user = decode;
+                    next();
+                }
+            }
+        );
+    } else {
+        res.status(401).send({ message: 'NOT AUTHORIZED !!!' });
+    }
+};
 
-export { protect }
+export { protect, isAuth }
+
+

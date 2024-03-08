@@ -19,8 +19,8 @@ export const SelectPatientsFromAPI = (data) => {
   let t = array.map((item, i) => (
     {
       key: i,
-      value: item._id,
-      label: `${item.firstName} ${item.lastName}`,
+      value: item?.user_id?._id,
+      label: `${item?.user_id?.name}`,
       name: "user_id"
     }
   ))
@@ -41,9 +41,6 @@ export const callAPI = (value) => {
 export function _calculateAge(dateString) {
   var today = new Date();
   var birthDate = new Date(dateString);
-  // console.log("Date 103", birthDate)
-  // console.log("Date 104", today)
-  // console.log("Date 105", new Date(dateString))
   var age = today.getFullYear() - birthDate.getFullYear();
   var m = today.getMonth() - birthDate.getMonth();
   if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {

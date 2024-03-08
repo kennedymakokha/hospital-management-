@@ -23,13 +23,14 @@ const registerTry = expressAsyncHandler(async (req, res) => {
         console.log(error)
     }
 })
-const getTryID = expressAsyncHandler(async (req, res) => {
-
+const getLastTry = expressAsyncHandler(async (req, res) => {
+    console.log(req.params.id)
     const user = await Triage.find({ user_id: req.params.id })
-    res.status(200).json(user[user.length - 1])
+    console.log(user)
+    return res.status(200).json(user[user.length - 1])
 })
 const getTriesByID = expressAsyncHandler(async (req, res) => {
-    const user = await Triage.find({ user_id: req.params.id })
+    const user = await Triage.find({ user_id: req.params.id }).populate("user_id", "name")
     res.status(200).json(user)
 })
 const updateTry = expressAsyncHandler(async (req, res) => {
@@ -52,5 +53,5 @@ const deleteTry = expressAsyncHandler(async (req, res) => {
 })
 
 export {
-    getTries, registerTry, getTriesByID, updateTry, deleteTry, getTryID
+    getTries, registerTry, getTriesByID, updateTry, deleteTry, getLastTry
 }

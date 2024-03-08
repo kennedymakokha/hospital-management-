@@ -7,21 +7,23 @@ import bcrypt from 'bcryptjs';
 import generateToken from "../utils/generateToken.js";
 
 
-const authUser = expressAsyncHandler(async (req, res) => {
-    const { email, password } = req.body;
-    const user = await User.findOne({ email }).populate('role')
 
+const authUser = expressAsyncHandler(async (req, res) => {
+    const { email, password, ID_no } = req.body;
+    const user = await User.findOne({ $or: [{ email }, { ID_no }] }).populate('role', 'name')
     if (user && (await user.matchPassword(password))) {
-        generateToken(res, user._id)
+        let token = generateToken(res, user._id)
+
         await Duty.create({ token: req.body.token, user_id: user._id, role_id: user.role._id, start: Date(Date.now()) })
         await User.findOneAndUpdate({ email }, { onduty: true }, { new: true, useFindAndModify: false })
-        let newTokens = user.tokens.push(req.body.token)
 
+        let newTokens = user.tokens.push(req.body.token)
         await User.findOneAndUpdate({ email }, { tokens: newTokens }, { new: true, useFindAndModify: false })
 
-        res.status(201).json({
+        return res.status(201).json({
             id: user._id,
             name: user.name,
+            token: token,
             email: user.email,
             role: user?.role?.name,
             onduty: user.onduty,
@@ -30,10 +32,9 @@ const authUser = expressAsyncHandler(async (req, res) => {
 
 
     } else {
-        res.status(401)
-        throw new Error("Invalid email or password")
+        return res.status(401).json("Invalid email or password")
+
     }
-    res.status(200).json({ message: 'Auth User' })
 })
 const registerUser = expressAsyncHandler(async (req, res) => {
     const { name, phone, email, password, roleName, confirm_password } = req.body
@@ -72,6 +73,18 @@ const getUsers = expressAsyncHandler(async (req, res) => {
     const users = await User.find({})
         .populate('role', 'name')
     res.status(200).json(users)
+})
+const getroleUsers = expressAsyncHandler(async (req, res) => {
+    if (req.params.role === "all") {
+        const users = await User.find({ deletedAt: null })
+            .populate('role', 'name')
+        return res.status(200).json(users)
+    } else {
+        let userRole = await Role.findOne({ name: req.params.role })
+        const users = await User.find({ deletedAt: null, role: userRole._id })
+            .populate('role', 'name')
+        return res.status(200).json(users)
+    }
 })
 const getUser = expressAsyncHandler(async (req, res) => {
     const user = await User.findById(req.params.id)
@@ -129,5 +142,5 @@ const updateUserProfile = expressAsyncHandler(async (req, res) => {
 })
 
 export {
-    authUser, updateUserProfile, EditUserDetails, registerUser, getUser, getUsers, logoutUser, getUserProfile
+    authUser, updateUserProfile, getroleUsers, EditUserDetails, registerUser, getUser, getUsers, logoutUser, getUserProfile
 }

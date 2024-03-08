@@ -13,13 +13,12 @@ import { useFetchPatientsQuery } from '../features/slices/patientSlice';
 import { SelectPatientsFromAPI, validPressureValue } from '../helpers';
 import { toast } from 'react-toastify';
 function Triage() {
-
-
     const [showModal, setShowModal] = useState(false);
     const [item, setitem] = useState({ weight: 0, height: 0, bp: "", bloodPressure: { upperValue: "", lowerValue: '' }, user_id: "", temp: 0 });
     const { data, refetch, isFetching } = useFetchTriageQuery({})
     const { data: patients } = useFetchPatientsQuery({})
     const [createTriage] = useCreateTriageMutation();
+    
     const closeModal = () => {
         setitem({})
         setShowModal(false)
@@ -32,7 +31,7 @@ function Triage() {
         }));
     };
 
-    
+  
     const submit = async () => {
         await validPressureValue(item.bp)
         try {
@@ -70,7 +69,7 @@ function Triage() {
                                 <td className="px-6 py-4 whitespace-nowrap">
                                     <div className="flex items-center" onClick={() => { setitem(triage); setShowModal(true); }}>
                                         <div className="ml-4">
-                                            <div className="text-sm font-medium text-gray-900">{triage?.user_id?.firstName} {triage?.user_id?.lastName}</div>
+                                            <div className="text-sm font-medium text-gray-900">{triage?.user_id?.name}</div>
                                         </div>
                                     </div>
                                 </td>

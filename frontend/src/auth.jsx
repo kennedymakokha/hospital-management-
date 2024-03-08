@@ -88,7 +88,7 @@ function Auth(props) {
                 <div className="bg-gray-400 w-full  h-full relative z-0">
                     <p className="italic text-bold  font-serif">Map</p>
                     <div className="absolute h-3/4 flex flex-col h-3/4 bg-white rounded-[25px] inset-[10%] flex justify-center items-center z-10">
-                        <div className='w-full h-[10%] bg-slate-600 items-center px-4 justify-between  flex  border-b-4 rounded-t-[25px]  border-b-blue-300 '>
+                        <div className='w-full h-[10%] bg-primary-100 items-center px-4 justify-between  flex  border-b-4 rounded-t-[25px]  border-b-blue-300 '>
                             <div className='flex items-center'>
                                 <img src={logo} alt='' className={`cursor-pointer duration-500 h-10 w-10  hover:rotate-[360deg]`} />
                                 <span className="text-slate-100 font-bold sm:text-2xl">Diabetes Center</span></div>
@@ -100,22 +100,10 @@ function Auth(props) {
                         </div>
                         <div className='w-full flex flex-row   h-[90%]  rounded-b-[25px]  '>
                             <div className='w-full h-full flex  rounded-b-[25px]'>
-                                <div className='sm:w-1/2 w-full h-full flex items-center justify-center bg-slate-600 sm:rounded-bl-[25px] sm:rounded-b-[0] rounded-b-[25px] '>
+                                <div className='sm:w-1/2 w-full h-full flex items-center justify-center bg-primary-100 sm:rounded-bl-[25px] sm:rounded-b-[0] rounded-b-[25px] '>
                                     <div className='p-4 w-3/4 h-full flex flex-col   '>
                                         <h2 className='text-xl text-slate-100 uppercase text-center font-bold p-4   '>{!reg ? "Login in" : "Register Doctor"}</h2>
-                                        {/* <InputItem setUser={setUser} onChange={(e) => setUser((prevState) => ({
-                                            ...prevState,
-                                            email: e.target.value,
-                                        }))}
-                                            value={user?.email}
-                                            name="email"
-                                            type="email"
-                                            label="Email"
-                                            placeholder="Please Enter a valid Email" />
-                                        <InputItem setUser={setUser} onChange={(e) => { console.log(e.target.value) }} value={user.phone} name="phone" type="number" label="Phone Number" placeholder="Please Enter a valid phone Number" />
-                                        <InputItem setUser={setUser} onChange={(e) => { console.log(e.target.value) }} value={user.password} name="password" type="password" label="Password" placeholder="password" />
-                                        <InputItem setUser={setUser} onChange={(e) => { console.log(e.target.value) }} value={user.confirmpassword} name="confirmpassword" type="password" label="Confirm password" placeholder="ReEnter Password" />
-                                         */}
+                                       
                                         {reg && <div className='flex flex-col'>
                                             <span className='text-[18px] font-semibold text-slate-100'>Name:</span >
                                             <div className='w-full flex bg-slate-100 justify-center items-center px-2 shadow-2xl rounded-md'>

@@ -14,14 +14,16 @@
     ],
     "consultation": [
         "Lab_tech",
-        "Dr"
+        "Dr",
+        "Admin"
     ],
     "accounts": [
         "Acc",
         "Admin"
     ],
     "triage": [
-        "Nurse"
+        "Nurse",
+        "Admin"
     ],
     "lab": [
         "Lab_tech",

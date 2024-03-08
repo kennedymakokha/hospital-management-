@@ -19,7 +19,7 @@ function Patients() {
     const [item, setitem] = useState({ firstName: "", dob: "", gender: "", lastName: "", ID_no: "", phone: '', email: "" });
 
     const { data, refetch, isFetching } = useFetchPatientsQuery({})
-   
+
     const [createPatient] = useCreatePatientMutation();
     const [updatePatient] = useUpdatePatientMutation();
     const [deletePatient] = useDeletePatientMutation();
@@ -84,48 +84,48 @@ function Patients() {
                     </TableHead>
                     <TBody>
                         {data?.map(person => (
-                            <tr key={person._id}>
+                            <tr key={person?._id}>
                                 <td className="px-6 py-4 whitespace-nowrap">
                                     <div className="flex items-center">
 
                                         <Link
-                                            to={`/patients/${person.firstName.replace(/\s+/g, '')
-                                        }`} state={{ details: person }}
+                                            to={`/patients/${person?.name?.replace(/\s+/g, '')
+                                                }`} state={{ details: person }}
 
                                         >
                                             <div className="ml-4">
-                                                <div className="text-sm font-medium text-gray-900">{person.firstName} {person.lastName}</div>
-                                                <div className="text-sm text-gray-500">{person.email}</div>
+                                                <div className="text-sm font-medium text-gray-900">{person?.user_id?.name}</div>
+                                                <div className="text-xs text-gray-500">{person?.user_id?.email}</div>
                                             </div>
                                         </Link>
                                     </div>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
-                                    <div className="text-sm text-gray-900">{person.ID_no}</div>
+                                    <div className="text-sm text-gray-900">{person?.ID_no}</div>
 
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
                                     <span
-                                        className="px-2 inline-flex text-xs leading-5
-      font-semibold rounded-full bg-green-100 text-green-800"
+                                        className="px-2 inline-flex text-sm leading-5
+      font-semibold rounded-full "
                                     >
-                                        {person.phone}
+                                        {person?.user_id?.phone}
                                     </span>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
                                     <span
-                                        className="px-2 inline-flex text-xs leading-5
-      font-semibold rounded-full bg-green-100 text-green-800"
+                                        className="px-2 inline-flex text-sm leading-5
+      font-semibold rounded-full "
                                     >
-                                        {person.gender}
+                                        {person?.gender}
                                     </span>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
                                     <span
-                                        className="px-2 inline-flex text-xs leading-5
-      font-semibold rounded-full bg-green-100 text-green-800"
+                                        className="px-2 inline-flex text-sm leading-5
+      font-semibold rounded-full "
                                     >
-                                        {_calculateAge(person.dob)}
+                                        {_calculateAge(person?.dob)}
                                     </span>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -136,7 +136,7 @@ function Patients() {
                                         <ButtonSM primary title="Edit" onClick={() => { setitem(person); setShowModal(true); }} height={2} width={8} />
                                     </div>
                                     <div className="text-indigo-600 hover:text-indigo-900">
-                                        <ButtonSM danger title="Delete" onClick={() => { deleteHandler(person._id); }} height={2} width={8} />
+                                        <ButtonSM danger title="Delete" onClick={() => { deleteHandler(person?._id); }} height={2} width={8} />
                                     </div>
                                 </td>
                             </tr>

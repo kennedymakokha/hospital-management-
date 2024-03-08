@@ -35,11 +35,11 @@ export default function DropdownComponent(props) {
         </button>
 
         <div className={`absolute ${show ? "flex" : "hidden"} right-0 z-10 w-56 mt-4 origin-top-right bg-white border border-gray-100 rounded-md shadow-lg`}>
-          <div className="p-2">
+          <div className="p-2 w-full">
             {props.items.map((item, i) => (
               <div key={i}
                 onClick={item.fun}
-                className={`block px-4 py-2 capitalize ${props.separator === true ? "pt-10 bg-red-400" : "mt-0"} text-sm text-gray-500 rounded-lg hover:bg-gray-50 hover:text-gray-700`}
+                className={`block px-4 py-2 capitalize ${props.separator === true ? "pt-10 bg-red-400" : "mt-0"} text-sm w-full text-gray-500 rounded-lg hover:bg-gray-200 hover:text-slate-500`}
               >
                 {item.title}
               </div>

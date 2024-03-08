@@ -19,10 +19,10 @@ const Modal = (props) => {
                                 <div className="flex items-start justify-between p-5 border-b border-solid border-gray-300 rounded-t ">
                                     <h3 className="text-xl font-semibold  text-slate-600 ">{props.title}</h3>
                                     <button
-                                        className="bg-slate-600 border-0 text-black rounded-full  float-right"
+                                        className="bg-primary-100 border-0 text-black rounded-full  float-right"
                                         onClick={() => props.closeModal()}
                                     >
-                                        <span className="text-slate-100  h-6 w-6 text-xl block bg-slate-600  flex items-center justify-center rounded-full">
+                                        <span className="text-slate-100  h-6 w-6 text-xl block bg-primary-100  flex items-center justify-center rounded-full">
                                             x
                                         </span>
                                     </button>

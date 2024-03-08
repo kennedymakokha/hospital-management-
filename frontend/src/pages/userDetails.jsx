@@ -36,7 +36,7 @@ function UserDetails() {
     const [editUserDetails] = useEditUserDetailsMutation()
 
     const { userInfo } = useSelector((state) => state.auth)
-
+   
     const submit = () => {
         try {
             console.log(item)

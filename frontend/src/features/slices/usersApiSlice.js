@@ -33,7 +33,7 @@ export const usersApiSlice = apiSlice.injectEndpoints({
             query: () => `${USER_URL}/profile`
         }),
         getusers: builder.query({
-            query: () => `${USER_URL}`
+            query: () => `${USER_URL}/role-users/all`
         }),
         logout: builder.mutation({
             query: () => ({

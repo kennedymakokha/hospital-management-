@@ -11,7 +11,8 @@
         "phone No",
         "gender",
         "Age",
-        "Next Visit "
+        "Next Visit ",
+        "Action"
     ],
     "TriageTableHead": [
         "name",
