@@ -1,5 +1,5 @@
 import { apiSlice } from "./apiSlice";
-const USER_URL = "/api/test";
+const USER_URL = "/api/tests";
 
 export const testApiSlice = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
@@ -10,6 +10,49 @@ export const testApiSlice = apiSlice.injectEndpoints({
                 body: data
             })
         }),
+        postPrescription: builder.mutation({
+            query: (data) => ({
+                url: `${USER_URL}/prescription/post-prescription`,
+                method: "POST",
+                body: data
+            })
+        }),
+        postSales: builder.mutation({
+            query: (data) => ({
+                url: `${USER_URL}/payment`,
+                method: "POST",
+                body: data
+            })
+        }),
+        fetchUserPrescriptions: builder.query({
+            query: (id) => ({
+                url: `${USER_URL}//prescription/post-prescription/${id}`,
+            })
+        }),
+        createsymptoms: builder.mutation({
+            query: (data) => ({
+                url: `${USER_URL}/symptoms`,
+                method: "POST",
+                body: data
+            })
+        }),
+        postresults: builder.mutation({
+            query: (data) => ({
+                url: `${USER_URL}/results`,
+                method: "POST",
+                body: data
+            })
+        }),
+        fetchResults: builder.query({
+            query: () => ({
+                url: `${USER_URL}/results`,
+            })
+        }),
+        fetchUserResults: builder.query({
+            query: (id) => ({
+                url: `${USER_URL}/results/${id}`,
+            })
+        }),
         updateTest: builder.mutation({
             query: (data) => ({
                 url: `${USER_URL}/${data._id}`,
@@ -18,8 +61,11 @@ export const testApiSlice = apiSlice.injectEndpoints({
             })
         }),
         fetchTest: builder.query({
-            query: () => `${USER_URL}`
+            query: () => ({
+                url: `${USER_URL}`,
+            })
         }),
+
         getsymptomsByPatient: builder.query({
             query: (id) => ({
                 url: `${USER_URL}/symptoms/${id}`,
@@ -30,6 +76,8 @@ export const testApiSlice = apiSlice.injectEndpoints({
                 url: `${USER_URL}/symptoms`,
             })
         }),
+
+
         getAllTriageByPatient: builder.query({
             query: (id) => ({
                 url: `${USER_URL}/all/${id}`,
@@ -44,4 +92,4 @@ export const testApiSlice = apiSlice.injectEndpoints({
     })
 })
 
-export const { useCreateTestMutation, useGetAllTriageByPatientQuery,useDeleteTestMutation,useGetsymptomsQuery, useGetsymptomsByPatientQuery, useFetchTestQuery, useUpdateTestMutation } = testApiSlice
+export const { usePostSalesMutation, useCreateTestMutation, usePostPrescriptionMutation, useFetchUserPrescriptionsQuery, useFetchResultsQuery, useFetchUserResultsQuery, useCreatesymptomsMutation, usePostresultsMutation, useGetAllTriageByPatientQuery, useDeleteTestMutation, useGetsymptomsQuery, useGetsymptomsByPatientQuery, useFetchTestQuery, useUpdateTestMutation } = testApiSlice

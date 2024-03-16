@@ -1,8 +1,16 @@
 {
     "Users": [
-       
         "Admin"
     ],
+    "Receptionist": [
+        "receptionist"
+    ],
+    "Pharmacist": [
+        "pharmacist"
+        
+    ],
+
+    
     "Dashboard": [
         "Dr",
         "Admin"
@@ -33,8 +41,10 @@
     "patients": [
         "Dr",
         "Lab_tech",
+        "receptionist",
         "Admin",
         "Nurse",
-        "Acc"
+        "Acc",
+        "pharmacist"
     ]
 }

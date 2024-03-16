@@ -13,9 +13,9 @@ const createHistory = expressAsyncHandler(async (req, res) => {
             start: body.start,
             end: body.end
         })
-        res.status(200).json(history)
+        return res.status(200).json(history)
     } catch (error) {
-        res.status(404);
+        return res.status(404);
         console.log(error)
         throw new Error("User Not Found")
     }
@@ -24,9 +24,9 @@ const getHistory = expressAsyncHandler(async (req, res) => {
 
     try {
         const history = await History.find({ deletedAt: null }).populate('user_id')
-        res.status(200).json(history)
+        return res.status(200).json(history)
     } catch (error) {
-        res.status(404);
+        return res.status(404);
         console.log(error)
         throw new Error("Fetching Failed ")
     }
@@ -35,9 +35,9 @@ const updateHistory = expressAsyncHandler(async (req, res) => {
 
     try {
         let updates = await History.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true, useFindAndModify: false })
-        res.status(200).json({ message: 'Hitory Updated successfully ', updates })
+        return res.status(200).json({ message: 'Hitory Updated successfully ', updates })
     } catch (error) {
-        res.status(404);
+        return res.status(404);
         console.log(error)
         throw new Error("Fetching Failed ")
     }
@@ -45,9 +45,9 @@ const updateHistory = expressAsyncHandler(async (req, res) => {
 const deleteHistory = expressAsyncHandler(async (req, res) => {
     try {
         let deleted = await History.findOneAndUpdate({ _id: req.params.id }, { deletedAt: Date() }, { new: true, useFindAndModify: false })
-        res.status(200).json({ message: 'Hitory deleted successfully ', deleted })
+        return res.status(200).json({ message: 'Hitory deleted successfully ', deleted })
     } catch (error) {
-        res.status(404);
+        return res.status(404);
         console.log(error)
         throw new Error("deletion Failed ")
     }

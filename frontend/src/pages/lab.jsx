@@ -7,22 +7,22 @@ import Modal from '../container/modal';
 import InputContainer, { SelectInput, TextArea } from '../container/input';
 import { Link } from 'react-router-dom';
 import Search from '../container/search';
-import { useGetsymptomsQuery } from '../features/slices/symptomsSlice';
+import { useGetsymptomsQuery, usePostresultsMutation } from '../features/slices/symptomsSlice';
+import { toast } from 'react-toastify';
 
 function Lab() {
 
     const headers = [
         "name",
         "Test & Results",
-
-
-
     ]
 
     const { data, refetch, isFetching } = useGetsymptomsQuery()
-    console.log(data)
+    const [postresults] = usePostresultsMutation();
+
     const [showModal, setShowModal] = useState(false);
-    const [more, setmore] = useState(false);
+    const [patient, setPatient] = useState("");
+    const [observation, setObservation] = useState("");
     const [results, setResults] = useState([{
         test: "", result: ""
     }])
@@ -34,13 +34,20 @@ function Lab() {
         }])
         setShowModal(false)
     }
-    // const changeInput = (e) => {
-    //     const { name, value } = e.target;
-    //     setitem((prevState) => ({
-    //         ...prevState,
-    //         [name]: value,
-    //     }));
-    // };
+    const openModal = (tests, patient, obervation) => {
+        setObservation(obervation)
+        setPatient(patient)
+        let item = []
+        for (let index = 0; index < tests.length; index++) {
+            item.push({
+                test_id: tests[index]._id, results: ''
+            })
+
+        }
+        setResults(item)
+
+    }
+
     const changeInput = (index) => (e) => {
         const newArray = results.map((item, i) => {
             if (index === i) {
@@ -51,37 +58,22 @@ function Lab() {
         });
         setResults(newArray);
     };
-    const submit = () => {
+    const submit = async () => {
+        try {
+            let lab = { patient_id: patient, observation_id: observation, results: results }
+            await postresults(lab)
+            closeModal()
+            toast("Results Posted successfully ")
 
-        // const newArray = [].map((item, i) => {
-        //     if (item?.id === i) {
-        //         setPeople((prevState) => ( // Replace the state
-        //             [ // with a new array
-        //                 ...people,
-        //                 // { prevState.results: results }
-        //                 // that contains all the old items
-        //                 // and one new item at the end
-        //             ]
-        //         ));
-        //     } else {
-        //         return item;
-        //     }
-        // });
-        setResults(newArray);
-        closeModal()
+        } catch (error) {
+            console.log(error)
+        }
     }
-    const populateInput = () => {
-        setResults( // Replace the state
-            [ // with a new array
-                ...results, // that contains all the old items
-                { test: "", result: "" } // and one new item at the end
-            ]
-        );
-    }
+    
 
     return (
         <Layout>
-            <TableContainer  isFetching={isFetching}>
+            <TableContainer isFetching={isFetching}>
                 <TableTitle tableTitle="patients " />
                 <div className='flex h-14 align-start float-left p-2 '>
                     <Search placeholder="Search for patient by name" />
@@ -92,12 +84,11 @@ function Lab() {
                     </TableHead>
                     <TBody>
                         {data?.map(person => (
-                            <tr key={person._id}>
+                            <tr key={person._id} >
                                 <td className="px-6 py-4 whitespace-nowrap">
-                                    <div className="flex items-center" onClick={() => { setitem(person); setShowModal(true); }}>
+                                    <div className="flex items-center" onClick={() => { setitem(person); setShowModal(true); openModal(person.test_id, person.patient_id._id, person._id) }}>
                                         <div className="ml-4">
-                                            <div className="text-sm font-medium text-gray-900">{person?.user_id?.firstName} {person?.user_id?.lastName}</div>
-
+                                            <div className="text-sm font-medium text-gray-900">{person?.patient_id?.user_id?.name}</div>
                                         </div>
 
                                     </div>
@@ -135,8 +126,18 @@ function Lab() {
                                     <div className='px-3 py-1 text-[16px] font-bold'>{result.name}</div>
                                 </div>
                                 <div className='w-[70%'>
-                                    <TextArea className="bg-red-200"
-                                        required value={item?.weight} type="text" name="result" label="results" placeholder="results" onChange={changeInput(i)} />
+                                    <span className='text-[16px] text-slate-600 px-4'>Present</span><input
+                                        checked={result.results === "present"}
+                                        value="present"
+                                        type="radio" onChange={changeInput(i)}
+                                        name="results" />
+                                    <span className='text-[16px] text-slate-600 px-4'>Absent</span><input type="radio"
+                                        checked={result.results === "absent"}
+                                        value="absent"
+                                        onChange={changeInput(i)}
+                                        name="results" />
+                                    {/* <TextArea className="bg-red-200"
+                                        required value={item?.weight} type="radio" name="results" label="results" placeholder="results" onChange={changeInput(i)} /> */}
                                 </div>
 
                             </div>

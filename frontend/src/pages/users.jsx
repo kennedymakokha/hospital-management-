@@ -6,26 +6,26 @@ import Button, { ButtonSM } from '../container/Button';
 import Modal from '../container/modal';
 import InputContainer, { SelectInput } from '../container/input';
 import { Link } from 'react-router-dom';
-import { PatientsTableHead } from '../data.json'
+import { UserTableHead } from '../data.json'
 import { useGetusersQuery, useRegisterMutation } from './../features/slices/usersApiSlice'
 import { useFetchPatientsQuery, useCreatePatientMutation, useDeletePatientMutation, useUpdatePatientMutation } from '../features/slices/patientSlice';
 import { toast } from 'react-toastify';
-import { _calculateAge } from '../helpers';
+import { SelectOptions, _calculateAge } from '../helpers';
 import Tab from '../container/tabs';
+import { useFetchRolesQuery } from '../features/slices/rolesSlice';
 function Users() {
-
-
     const [showModal, setShowModal] = useState(false);
     const [filter, setFilter] = useState("");
     const [tabs, setTabs] = useState([
         { value: "", title: "all", label: "Select a role", state: true },
         { value: "Nurse", title: "Nurse", label: "Nurse", state: false },
         { value: "Lab_tech", title: "Lab Techs", label: "Lab Techs", state: false },
-        { value: "Dr", title: "doctors", label: "Doctors", state: false }
+        { value: "Dr", title: "doctors", label: "Doctors", state: false },
+        { value: "receptionist", title: "receptionist", label: "Receptionist", state: false }
     ])
     const [item, setitem] = useState({ name: "", ID_no: "", phone: '', email: "", role: "" });
-
     const { data, refetch, isFetching } = useGetusersQuery({})
+    const { data:roles } = useFetchRolesQuery()
     let users = []
     if (filter !== "") {
         users = data?.filter(word => word?.role?.name === filter)
@@ -34,7 +34,6 @@ function Users() {
     const [updatePatient] = useUpdatePatientMutation();
     const [deletePatient] = useDeletePatientMutation();
     const changeInput = (e) => {
-
         const { name, value } = e.target;
         setitem((prevState) => ({
             ...prevState,
@@ -46,16 +45,13 @@ function Users() {
         setShowModal(false)
     }
     const submit = async () => {
-
         try {
-
             if (item._id) {
                 await updatePatient(item).unwrap();
                 refetch()
                 closeModal()
                 toast('Created Succesfully')
             } else {
-
                 if (filter !== "") {
                     item.role = filter
                 }
@@ -68,19 +64,17 @@ function Users() {
 
         } catch (error) {
             console.log(error)
-            toast("error creating I=User ")
-            console.log(error)
+            toast("error creating User ")
         }
     }
     const handleTab = (title) => {
         let newTab = []
         tabs.forEach(tab => {
-
             if (tab.title === title) {
                 let v = { ...tab, state: true }
                 newTab.push(v)
                 setFilter(tab.value)
-                return v; //gets everything that was already in item, and updates "done"
+                return v; 
             }
             else {
                 let v = { ...tab, state: false }
@@ -95,13 +89,9 @@ function Users() {
     }
     const deleteHandler = async (id) => {
         try {
-
             await deletePatient(id).unwrap();
             refetch()
-
             toast(`${item.lastName} Deleted Succesfully`)
-
-
         } catch (error) {
             console.log("first", error)
         }
@@ -109,8 +99,7 @@ function Users() {
 
     return (
         <Layout>
-
-            <TableContainer isFetching={isFetching}>
+           <TableContainer isFetching={isFetching}>
                 <div className='flex items-center justify-center'>
                     <TableTitle tableTitle={filter === "" ? " All system users" : filter} />
                 </div>
@@ -123,9 +112,11 @@ function Users() {
                     primary title="New" onClick={() => { setShowModal(true) }} /></div>
 
                 <Table>
+                          
                     <TableHead>
-                        {PatientsTableHead.map((head, i) => (<TH key={i} title={head} />))}
+                        {UserTableHead.map((head, i) => (<TH key={i} title={head} />))}
                     </TableHead>
+                    
                     <TBody>
                         {users?.map(person => (
                             <tr key={person._id}>
@@ -145,36 +136,15 @@ function Users() {
                                     </div>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
-                                    <div className="text-sm text-gray-900">{person.email}</div>
-
+                                    <div className="text-sm text-gray-900">{person.ID_no}</div>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
-                                <span
-                                        className="px-2 inline-flex text-xs leading-5
-      font-semibold rounded-full "
-                                    >
+                                <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full " >
                                         {person?.phone}
                                     </span>
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                    <span
-                                        className="px-2 inline-flex text-xs leading-5
-      font-semibold rounded-full "
-                                    >
-                                        {person?.gender}
-                                    </span>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                    <span
-                                        className="px-2 inline-flex text-xs leading-5
-      font-semibold rounded-full "
-                                    >
-                                        {person?.dob}
-                                    </span>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    {moment().format('YYYY-MM-DD')}
-                                </td>
+                               
+                               
                                 <td className="px-6 py-4 whitespace-nowrap  flex:wrap flex   gap-x-1 text-sm font-medium">
                                     <div className="text-indigo-600 hover:text-indigo-900">
                                         <ButtonSM primary title="Edit" onClick={() => { setitem(person); setShowModal(true); }} height={2} width={8} />
@@ -229,7 +199,8 @@ function Users() {
                                 <SelectInput
                                     label="Role"
                                     placeholder="Start typing Dept Name"
-                                    options={tabs}
+                                    // options={tabs}
+                                    options={SelectOptions({ array: roles, name: "role" })}
                                     // value={item.userId}
                                     onChange={(e) => {
                                         setitem((prevState) => ({

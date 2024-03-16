@@ -25,6 +25,7 @@ import Button from "./container/Button";
 import Users from "./pages/users";
 import UnAnauth from "./pages/unauth";
 import UserDetails from "./pages/userDetails";
+import Roles from "./pages/roles";
 
 const { VITE_APP_VAPID_KEY } = import.meta.env;
 const App = () => {
@@ -48,6 +49,9 @@ const App = () => {
       </ProtectedRoute>} />
       <Route exact path='/patients/:name' element={<ProtectedRoute roles={patients}>
         <PatientDetails />
+      </ProtectedRoute>} />
+      <Route exact path='/user-roles' element={<ProtectedRoute roles={patients}>
+        <Roles />
       </ProtectedRoute>} />
       <Route exact path='/users/:name' element={<ProtectedRoute roles={UserPermissions}>
         <UserDetails />

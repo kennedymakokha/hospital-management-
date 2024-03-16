@@ -20,6 +20,7 @@ function InputContainer(props) {
                 <input
                     type={props.type ? props.type : "text"} placeholder={props.placeholder} name={props.name}
                     onChange={props.onChange}
+                    onBlur={props.onBlur}
                     value={props.value}
                     className="shadow h-10 appearance-none text-[14px] border rounded w-full  px-1 text-black" />}
         </div>
@@ -33,11 +34,11 @@ export function TextArea(props) {
                 {props.label}{props.required && <span className='text-red-500 flex items-center justify-center w-4 '> * </span>}
             </label>
 
-            <textarea rows="4" cols="50"
+            <textarea rows={props.cols ? props.cols : "4"} cols="50"
                 type={props.type ? props.type : "text"} placeholder={props.placeholder} name={props.name}
                 onChange={props.onChange}
                 value={props.value}
-                className="shadow  appearance-none text-[14px] border rounded w-full  px-1 text-black" />
+                className="  appearance-none text-[14px] focus:outline-none    rounded w-full  px-1 text-black" />
         </div>
     )
 }
@@ -45,17 +46,53 @@ export function TextArea(props) {
 
 
 export function SelectInput(props) {
-    const { options, value, onChange, label } = props
+    let { options, value, onChange, label } = props
+    const [data, setData] = useState(options)
+
+
+
+    const [searchKey, setSearchKey] = useState('')
     const [typing, setTyping] = useState(true)
-    var newArray = (value) => options.filter(function (el) {
-        return el.name === value
+    const [typingTimeout, setTypingTimeout] = useState(0)
 
-    });
-    const startTyping = async (value) => {
-        if (value.length === 3) {
-            setTyping(!typing)
+    // function filterArrayByInput(array, searchText) {
+    //     return array.filter(item => {
+    //         // Convert both the item value and search text to lowercase for case-insensitive comparison
+    //         const itemText = item.label.toLowerCase();
+    //         const searchQuery = searchText.toLowerCase();
 
+    //         // Check if the item contains the search text
+    //         // setData(itemText.includes(searchQuery))
+    //         return;
+    //     });
+    // }
+
+    function filterArrayByInput(arrayOfObjects, searchText) {
+        return arrayOfObjects.filter(object => {
+            // Convert the object values to lowercase for case-insensitive comparison
+            const objectValues = Object.values(object).map(value => {
+                value?.toString()?.toLowerCase()
+
+            });
+            // console.table(objectValues(value => value.includes(searchText.toLowerCase())))
+            // Check if any object value includes the search text
+            return objectValues.some(value => value.includes(searchText.toLowerCase()));
+        });
+    }
+    const changeName = (event) => {
+
+
+        if (typingTimeout) {
+            clearTimeout(typingTimeout);
         }
+        setSearchKey(event)
+
+        setTypingTimeout(
+            setTimeout(function () {
+                filterArrayByInput(options, event)
+                setTyping(false)
+            }, 1000)
+        )
 
     }
 
@@ -65,15 +102,15 @@ export function SelectInput(props) {
                 {props.label}{props.required && <span className='text-red-500 flex items-center justify-center w-4 '> * </span>}
             </label>
             {props.search && typing ?
-            
+
                 <input
                     type={props.type ? props.type : "text"} placeholder={props.placeholder} name={props.name}
-                    onChange={(e) => startTyping(e.target.value)}
+                    onChange={(e) => changeName(e.target.value)}
                     value={props.value}
                     className="shadow h-10 appearance-none text-[14px] border rounded w-full  px-1 text-black" />
                 : <select className="shadow h-10 appearance-none text-[14px] border rounded w-full  px-1 text-black"
                     value={value} onChange={onChange}>
-                    {options.map((option) => (
+                    {data.map((option) => (
                         <option key={option.value} value={option.value}>{option.label}</option>
                     ))}
                 </select>

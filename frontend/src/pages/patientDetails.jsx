@@ -12,13 +12,16 @@ import InputContainer, { SelectInput } from '../container/input';
 import { useGetAllTriageByPatientQuery, useGetTriageByPatientQuery } from '../features/slices/triageSlice.jsx';
 import { PatientHistoryTableHead } from './../data.json'
 import { _calculateAge } from '../helpers/index.jsx';
-import LabTable from './Tables/labTable.jsx';
+import LabTable, { ObservationTable } from './Tables/labTable.jsx';
 import TitleContainer, { MetaDatacontainer, TriageItem } from '../container/titleContainer.jsx';
-import { useGetsymptomsByPatientQuery } from '../features/slices/symptomsSlice.jsx';
-import DoctorModal from './roleModals/doctor.jsx';
+import { useFetchUserPrescriptionsQuery, useFetchUserResultsQuery, useGetsymptomsByPatientQuery } from '../features/slices/symptomsSlice.jsx';
+import DoctorModal, { PrescriptionModal } from './roleModals/doctor.jsx';
 import { useSelector } from 'react-redux';
 import Tab, { TabContainer } from '../container/tabs.jsx';
-
+import { useFetchPatientsByIDQuery } from '../features/slices/patientSlice.jsx';
+import { DiastolicData, bloodPressure, systolicData, tempData } from '../helpers/dataGen.js';
+import { useFetchQuery } from '../features/slices/medicationsSlice.jsx';
+import Patientsprescription from '../container/patientsprescription.jsx';
 
 
 
@@ -26,40 +29,30 @@ function PatientDetails() {
     const location = useLocation()
     const { details } = location.state
     const [show, setShow] = useState(false)
+    const [pres, setPres] = useState(false)
+    const [item, setItem] = useState({ patient_id: details._id, symptoms: "", tests: [] })
+    const [prescription, setPrescription] = useState({ patient_id: details._id, details: "", drugs: [], labTest_id: "" })
     const [tabs, setTabs] = useState([
-        { title: "all", state: true },
+        { title: "observations", state: true },
         { title: "lab", state: false },
         { title: "statistics", state: false },
         { title: "history", state: false },
         { title: "account", state: false }
         // "All", "Lab", "Statistics", "history", "Accounts",
     ])
-    const { data: symptoms } = useGetsymptomsByPatientQuery(details._id)
-    const { data: userTriage, refetch, isFetching } = useGetTriageByPatientQuery(details._id)
-    const { data: patientTries } = useGetAllTriageByPatientQuery(details._id)
+    const { data: symptoms, refetch: refetchSymptoms, isFetching: loadingSymptoms } = useGetsymptomsByPatientQuery(details._id)
+    const { data: userTriage, refetch, isFetching } = useGetTriageByPatientQuery(details?.user_id?._id)
+
+    const { data: results, refetch: refetchresults, isFetching: loadingResults } = useFetchUserResultsQuery(details._id)
+    const { data: detail, } = useFetchPatientsByIDQuery(details._id)
+    const { data: patientTries } = useGetAllTriageByPatientQuery(details?.user_id?._id)
+
     const { userInfo } = useSelector((state) => state.auth)
-    let systolicData = []
-    let DiastolicData = []
-    let tempData = []
-    let BloodSugerData = []
-    const bloodPressure = () => {
-
-        patientTries?.forEach(element => {
-            systolicData.push({ x: new Date(element.createdAt), y: parseInt(element?.bloodPressure?.upperValue) },)
-            DiastolicData.push({ x: new Date(element.createdAt), y: parseInt(element?.bloodPressure?.lowerValue) },)
-            tempData.push({ x: new Date(element.createdAt), y: parseInt(element?.temp) },)
-            BloodSugerData.push({ x: new Date(element.createdAt), y: parseInt(element?.temp) },)
-
-        });
-    }
-    bloodPressure()
-
-
+    bloodPressure(patientTries)
 
     const handleTab = (title) => {
         let newTab = []
         tabs.forEach(tab => {
-
             if (tab.title === title) {
                 let v = { ...tab, state: true }
                 newTab.push(v)
@@ -70,12 +63,11 @@ function PatientDetails() {
                 newTab.push(v)
                 return v;
             }
-
         });
-
         setTabs(newTab)
 
     }
+
     return (
         <Layout>
             <div className=' flex w-full h-[200px] '>
@@ -87,21 +79,26 @@ function PatientDetails() {
 
                 <div className='w-2/3 h-[200px] pr-2 flex items-between justify-between bg-slate-100 inner-shadow shadow-xl rounded-md'>
                     <div>
-                        <MetaDatacontainer title="Name" value={`${details.firstName} ${details.lastName}`} />
+                        <MetaDatacontainer title="Name" value={`${detail?.user_id?.name} `} />
                         <MetaDatacontainer title="Age" value={_calculateAge(details.dob)} />
                         <MetaDatacontainer title="Gender" value={details.gender} />
-                        <MetaDatacontainer title="Phone" value={details.phone} />
-                        <MetaDatacontainer title="Email" value={details.email} />
+                        <MetaDatacontainer title="Phone" value={detail?.user_id.phone} />
+                        <MetaDatacontainer title="Email" value={detail?.user_id.email} />
                     </div>
-                    <div className='float-bottom'>
-                        {userInfo.role === "Dr" ? <Button secondary title="add" onClick={() => { setShow(true) }} /> : null}
+                    {/* <StateusContainer />
+                    <StateusContainer /> */}
+                    <div className='pb-2 items-end flex flex-col justify-end'>
+                        {userInfo.role === "Dr" ?
+                            <div className='flex flex-row gap-x-1'>
+                                <Button secondary title="Sent to lab" onClick={() => { setShow(true) }} />
+                                {/* <Button secondary title="prescribe" onClick={() => { setPres(true) }} /> */}
+                            </div>
+                            : null}
                     </div>
-
                 </div>
-
             </div>
-
-            <div className='w-full flex-col flex h-[200px] '>
+            <Patientsprescription _id={details._id} />
+            {userInfo.role !== "pharmacist" && <div className='w-full flex-col flex h-[200px] '>
                 <TitleContainer title="Triage Info" />
                 <div className='flex  w-full '>
                     <TriageItem title="temerature" value={userTriage?.temp} symbol='&#x2103;' />
@@ -111,10 +108,10 @@ function PatientDetails() {
                     <TriageItem title="Blood Sugar" value={userTriage?.bloodSugar} symbol='mg/dL (3.9 mmol/L) ' />
                 </div>
 
-            </div>
-            
-            <Tab data={tabs} onChange={handleTab} />
-            {tabs.map((tab, i) => (
+            </div>}
+
+            {userInfo.role !== "pharmacist" && <Tab data={tabs} onChange={handleTab} />}
+            {userInfo.role !== "pharmacist" && tabs.map((tab, i) => (
                 <div key={i}>
                     <TabContainer title="Statistics" tab={tab} tab1="statistics"
                         body={<div className='w-full flex h-[400px]  '>
@@ -128,7 +125,8 @@ function PatientDetails() {
                                 <LineChart Data1={tempData} type="stepLine" double title="Blood Sugar" />
                             </div>
                         </div>} />
-                    <TabContainer title="Lab Results" tab={tab} tab1="lab" body={<LabTable data={[]} />} />
+                    <TabContainer title="observations" tab={tab} tab1="observations" body={<ObservationTable data={symptoms} />} />
+                    <TabContainer title="Lab Results" tab={tab} tab1="lab" body={<LabTable open={(lab) => { setPres(true); setPrescription(prevState => ({ ...prevState, labTest_id: lab })) }} data={results} />} />
                     <TabContainer title="Patient History" tab={tab} tab1="history" body={<LabTable data={[]} />} />
                     <TabContainer title="Patient Payment History " tab={tab} tab1="account" body={<LabTable data={[]} />} />
 
@@ -136,7 +134,8 @@ function PatientDetails() {
                 </div>
             ))
             }
-            <DoctorModal item={{}} closeModal={() => { setShow(false) }} showModal={show} />
+            <DoctorModal isFetching={loadingSymptoms} refetch={refetchSymptoms} item={item} setItem={setItem} closeModal={() => { setShow(false); setItem({ patient_id: details._id, symptoms: "", tests: [] }) }} showModal={show} />
+            <PrescriptionModal isFetching={loadingSymptoms} refetch={refetchresults} item={prescription} setItem={setPrescription} closeModal={() => { setPres(false); setItem({ patient_id: details._id, symptoms: "", tests: [] }) }} showModal={pres} />
         </Layout>
     )
 }

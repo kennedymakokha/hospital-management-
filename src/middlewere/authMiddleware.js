@@ -13,12 +13,12 @@ const protect = expressAsyncHandler(async (req, res, next) => {
            
             next()
         } catch (error) {
-            res.status(401)
+            return res.status(401)
             throw new Error("Unauthorized access- INVALID TOKEN")
 
         }
     } else {
-        res.status(401);
+        return res.status(401);
         throw new Error("Unauthorized access- NO TOKEN")
     }
 })
@@ -31,7 +31,7 @@ const isAuth = (req, res, next) => {
             process.env.JWT_SECRET || 'somethingsecret',
             (err, decode) => {
                 if (err) {
-                    res.status(401).send({ message: 'NOT AUTHORIZED !!!' });
+                    return res.status(401).send({ message: 'NOT AUTHORIZED !!!' });
                 } else {
                     req.user = decode;
                     next();
@@ -39,7 +39,7 @@ const isAuth = (req, res, next) => {
             }
         );
     } else {
-        res.status(401).send({ message: 'NOT AUTHORIZED !!!' });
+        return res.status(401).send({ message: 'NOT AUTHORIZED !!!' });
     }
 };
 

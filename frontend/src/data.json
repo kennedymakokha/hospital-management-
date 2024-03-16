@@ -7,11 +7,27 @@
     ],
     "PatientsTableHead": [
         "name",
-        "Identification Number",
+        "ID Number",
         "phone No",
         "gender",
         "Age",
         "Next Visit ",
+        "Action"
+    ],
+    "UserTableHead": [
+        "name",
+        "ID Number",
+        "phone No",
+        "Action"
+    ],
+    "PrescriptionsTableHead": [
+        "Drug",
+        "price"
+        
+    ],
+    "RolesTableHead": [
+        "name",
+        "Display Name",
         "Action"
     ],
     "TriageTableHead": [
@@ -24,12 +40,18 @@
     "PatientHistoryTableHead": [
         "Date",
         "Department",
-        "Doctor", "treatment"
+        "Doctor",
+        "treatment"
     ],
     "LabTableHead": [
         "Date",
-        "Patient",
-        "Results"
+        "observation",
+        "Results",
+        "Prescriptions"
+    ],
+    "ObsTableHead": [
+        "Date ",
+        "Observations",
+        "Tests"
     ]
-    
 }

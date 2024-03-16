@@ -3,11 +3,9 @@ export const SelectOptions = (data) => {
 
   let t = array?.map((item, i) => (
     {
-      key: i,
+
       value: item.id ? item.id : item._id,
-      other: item.target ? item.target : null,
-      label: item.title ? item.title : item.name,
-      name: name
+      label: item.title ? item.title : item.name
     }
   ))
   return t

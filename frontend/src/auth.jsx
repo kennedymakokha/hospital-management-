@@ -59,8 +59,8 @@ function Auth(props) {
         console.log(props.value)
         return (
             < div className='flex flex-col' >
-                <span className='text-[18px] font-semibold text-slate-100'>{props.label}:</span >
-                <div className='w-full flex bg-slate-100 justify-center items-center px-2 shadow-2xl rounded-md'>
+                <span className='text-[18px] font-semibold text-secondary-100'>{props.label}:</span >
+                <div className='w-full flex bg-primary-500 justify-center items-center px-2 shadow-2xl rounded-md'>
                     <input type={props.type}
                         onChange={props.onChange}
                         placeholder={props.placeholder}
@@ -100,13 +100,13 @@ function Auth(props) {
                         </div>
                         <div className='w-full flex flex-row   h-[90%]  rounded-b-[25px]  '>
                             <div className='w-full h-full flex  rounded-b-[25px]'>
-                                <div className='sm:w-1/2 w-full h-full flex items-center justify-center bg-primary-100 sm:rounded-bl-[25px] sm:rounded-b-[0] rounded-b-[25px] '>
+                                <div className='sm:w-1/2 w-full h-full flex items-center justify-center bg-gradient-to-r from-cyan-500 to-blue-500 sm:rounded-bl-[25px] sm:rounded-b-[0] rounded-b-[25px] '>
                                     <div className='p-4 w-3/4 h-full flex flex-col   '>
-                                        <h2 className='text-xl text-slate-100 uppercase text-center font-bold p-4   '>{!reg ? "Login in" : "Register Doctor"}</h2>
-                                       
+                                        <h2 className='text-xl text-secondary-100 uppercase text-center font-bold p-4   '>{!reg ? "Login in" : "Register Doctor"}</h2>
+
                                         {reg && <div className='flex flex-col'>
-                                            <span className='text-[18px] font-semibold text-slate-100'>Name:</span >
-                                            <div className='w-full flex bg-slate-100 justify-center items-center px-2 shadow-2xl rounded-md'>
+                                            <span className='text-[18px] font-semibold text-primary-100'>Name:</span >
+                                            <div className='w-full flex bg-primary-500 justify-center items-center px-2 shadow-2xl rounded-md'>
                                                 <input type='text'
                                                     onChange={changeInput}
                                                     placeholder="placeholder"
@@ -117,37 +117,37 @@ function Auth(props) {
                                             </div>
                                         </div>}
                                         <div className='flex flex-col'>
-                                            <span className='text-[18px] font-semibold text-slate-100'>Email:</span >
-                                            <div className='w-full flex bg-slate-100 justify-center items-center px-2 shadow-2xl rounded-md'>
+                                            <span className='text-[18px] font-semibold text-secondary-100'>Email:</span >
+                                            <div className='w-full flex bg-primary-500 justify-center items-center px-2 shadow-2xl rounded-md'>
                                                 <input type='email'
                                                     onChange={changeInput}
                                                     placeholder="Email"
                                                     value={user.email}
                                                     name='email'
-                                                    className={`bg-slate-100 h-[40px] w-[100%] px-2 shadow-2xl rounded-md`} />
+                                                    className={`bg-primary-500 h-[40px]  focus:outline-none  w-[100%] px-2 shadow-2xl rounded-md`} />
 
                                             </div>
                                         </div>
                                         {reg && <div className='flex flex-col'>
-                                            <span className='text-[18px] font-semibold text-slate-100'>Phone Number:</span >
-                                            <div className='w-full flex bg-slate-100 justify-center items-center px-2 shadow-2xl rounded-md'>
+                                            <span className='text-[18px] font-semibold text-secondary-100'>Phone Number:</span >
+                                            <div className='w-full flex bg-primary-500 justify-center items-center px-2 shadow-2xl rounded-md'>
                                                 <input type='numeric'
                                                     onChange={changeInput}
                                                     placeholder="Phone Number"
                                                     value={user.phone}
                                                     name='phone'
-                                                    className={`bg-slate-100 h-[40px] w-[100%] px-2 shadow-2xl rounded-md`} />
+                                                    className={`bg-primary-500-100  focus:outline-none  h-[40px] w-[100%] px-2 shadow-2xl rounded-md`} />
 
                                             </div>
                                         </div>}
                                         < div className='flex flex-col' >
-                                            <span className='text-[18px] font-semibold text-slate-100'>Password:</span >
-                                            <div className='w-full flex bg-slate-100 justify-center items-center px-2 shadow-2xl rounded-md'>
+                                            <span className='text-[18px] font-semibold text-secondary-100'>Password:</span >
+                                            <div className='w-full flex bg-primary-500 justify-center items-center px-2 shadow-2xl rounded-md'>
                                                 <input type={!showpass ? "text" : 'password'}
                                                     onChange={changeInput}
                                                     value={user.password}
                                                     name="password"
-                                                    className={`bg-slate-100 w-[95%] h-[40px] px-2 shadow-2xl rounded-md`} />
+                                                    className={`bg-primary-500  focus:outline-none  w-[95%] h-[40px] px-2 shadow-2xl rounded-md`} />
                                                 {showpass ? <svg onClick={() => { setShowpass(!showpass) }} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
@@ -162,13 +162,13 @@ function Auth(props) {
 
                                         </div >
                                         {reg && <div className='flex flex-col' >
-                                            <span className='text-[18px] font-semibold text-slate-100'>confirm Password:</span >
-                                            <div className='w-full flex bg-slate-100 justify-center items-center px-2 shadow-2xl rounded-md'>
+                                            <span className='text-[18px] font-semibold text-secondary-100'>confirm Password:</span >
+                                            <div className='w-full flex bg-primary-500 justify-center items-center px-2 shadow-2xl rounded-md'>
                                                 <input type={!showpass ? "text" : 'password'}
                                                     onChange={changeInput}
                                                     value={user.confirmpassword}
                                                     name="confirmpassword"
-                                                    className={`bg-slate-100 w-[95%] h-[40px] px-2 shadow-2xl rounded-md`} />
+                                                    className={`bg-slate-100   focus:outline-none w-[95%] h-[40px] px-2 shadow-2xl rounded-md`} />
                                                 {showpass ? <svg onClick={() => { setShowpass(!showpass) }} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
@@ -180,16 +180,17 @@ function Auth(props) {
                                             </div>
                                         </div >}
                                         <div className='w-full flex-col flex items-center justify-center '>
-                                            <div onClick={(e) => submitHandler(e)} className='w-1/2 h-10 shadow-3xl items-center justify-center flex rounded-md  bg-blue-300 hover:bg-slate-300 my-5'>
-                                                <span className='text-xl font-semibold uppercase'>{!reg ? "Login" : "Register"}</span>
+                                            <div onClick={(e) => submitHandler(e)} className='w-1/2 h-10 shadow-3xl items-center justify-center flex rounded-md  bg-secondary-100 hover:bg-slate-300 my-5'>
+                                                <span className='text-xl text-white font-semibold uppercase'>{!reg ? "Login" : "Register"}</span>
                                             </div>
-                                            <h2 className='text-slate-300' onClick={() => setReg(!reg)}>{!reg && "Register"}</h2>
+                                            {/* <h2 className='text-slate-300' onClick={() => setReg(!reg)}>{!reg && "Register"}</h2> */}
                                         </div>
 
                                     </div>
 
                                 </div>
-                                <div className='w-1/2 h-full sm:flex hidden  items-center justify-center p-3 '>
+                                
+                                <div className='w-1/2 h-full  sm:flex hidden  items-center  justify-center p-3 '>
                                     <img src={logo1} className='w-full h-full' alt="" />
                                 </div>
                             </div>

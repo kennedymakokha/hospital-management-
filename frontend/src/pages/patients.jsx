@@ -7,19 +7,20 @@ import Modal from '../container/modal';
 import InputContainer, { SelectInput } from '../container/input';
 import { Link } from 'react-router-dom';
 import { PatientsTableHead } from './../data.json'
-
 import { useFetchPatientsQuery, useCreatePatientMutation, useDeletePatientMutation, useUpdatePatientMutation } from '../features/slices/patientSlice';
 import { toast } from 'react-toastify';
 import { _calculateAge } from '../helpers';
+import { debounce } from '../helpers/debounce';
+import { useSelector } from 'react-redux';
+
 function Patients() {
 
 
     const [showModal, setShowModal] = useState(false);
-
+    const [searchKey, setsearchKey] = useState("");
     const [item, setitem] = useState({ firstName: "", dob: "", gender: "", lastName: "", ID_no: "", phone: '', email: "" });
-
-    const { data, refetch, isFetching } = useFetchPatientsQuery({})
-
+    const { userInfo } = useSelector((state) => state.auth)
+    const { data, refetch, isFetching } = useFetchPatientsQuery(searchKey)
     const [createPatient] = useCreatePatientMutation();
     const [updatePatient] = useUpdatePatientMutation();
     const [deletePatient] = useDeletePatientMutation();
@@ -54,16 +55,18 @@ function Patients() {
             console.log(error)
         }
     }
+    const search = async (e) => {
+        setsearchKey(e.target.value)
+        refetch()
+        // debounce(() => refetch(), 5000);
 
+
+    }
     const deleteHandler = async (id) => {
         try {
-
             await deletePatient(id).unwrap();
             refetch()
-
             toast(`${item.lastName} Deleted Succesfully`)
-
-
         } catch (error) {
             console.log("first", error)
         }
@@ -73,11 +76,17 @@ function Patients() {
         <Layout>
             <TableContainer isFetching={isFetching}>
                 <TableTitle tableTitle="patients " />
-                <div className='flex align-end float-right m-2 '> <Button
-                    icon={<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
-                        <path d="M5.25 6.375a4.125 4.125 0 1 1 8.25 0 4.125 4.125 0 0 1-8.25 0ZM2.25 19.125a7.125 7.125 0 0 1 14.25 0v.003l-.001.119a.75.75 0 0 1-.363.63 13.067 13.067 0 0 1-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 0 1-.364-.63l-.001-.122ZM18.75 7.5a.75.75 0 0 0-1.5 0v2.25H15a.75.75 0 0 0 0 1.5h2.25v2.25a.75.75 0 0 0 1.5 0v-2.25H21a.75.75 0 0 0 0-1.5h-2.25V7.5Z" />
-                    </svg>}
-                    primary title="New" onClick={() => { setShowModal(true) }} /></div>
+                <div className='flex justify-between items-center m-2 '>
+                    <InputContainer value={searchKey} name="name" placeholder="Search "
+                        onChange={(e) => debounce(search(e), 1000)}
+                    />
+
+                    {userInfo.role === "receptionist" && <Button
+                        icon={<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+                            <path d="M5.25 6.375a4.125 4.125 0 1 1 8.25 0 4.125 4.125 0 0 1-8.25 0ZM2.25 19.125a7.125 7.125 0 0 1 14.25 0v.003l-.001.119a.75.75 0 0 1-.363.63 13.067 13.067 0 0 1-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 0 1-.364-.63l-.001-.122ZM18.75 7.5a.75.75 0 0 0-1.5 0v2.25H15a.75.75 0 0 0 0 1.5h2.25v2.25a.75.75 0 0 0 1.5 0v-2.25H21a.75.75 0 0 0 0-1.5h-2.25V7.5Z" />
+                        </svg>}
+                        primary title="New" onClick={() => { setShowModal(true) }} />}
+                </div>
                 <Table>
                     <TableHead>
                         {PatientsTableHead.map((head, i) => (<TH key={i} title={head} />))}
@@ -89,7 +98,7 @@ function Patients() {
                                     <div className="flex items-center">
 
                                         <Link
-                                            to={`/patients/${person?.name?.replace(/\s+/g, '')
+                                            to={`/patients/${person?.user_id?.name?.replace(/\s+/g, '')
                                                 }`} state={{ details: person }}
 
                                         >
@@ -131,14 +140,14 @@ function Patients() {
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                     {moment().format('YYYY-MM-DD')}
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap  flex  gap-x-1 text-sm font-medium">
+                                {userInfo.role === "receptionist" ? <td className="px-6 py-4 whitespace-nowrap  flex  gap-x-1 text-sm font-medium">
                                     <div className="text-indigo-600 hover:text-indigo-900">
                                         <ButtonSM primary title="Edit" onClick={() => { setitem(person); setShowModal(true); }} height={2} width={8} />
                                     </div>
                                     <div className="text-indigo-600 hover:text-indigo-900">
                                         <ButtonSM danger title="Delete" onClick={() => { deleteHandler(person?._id); }} height={2} width={8} />
                                     </div>
-                                </td>
+                                </td>:<td></td>}
                             </tr>
                         ))}
                     </TBody>
@@ -161,14 +170,7 @@ function Patients() {
                                 <InputContainer required value={item?.lastName} name="lastName" label="Last Name" placeholder="Last Name" onChange={(e) => changeInput(e)} />
                             </div>
                         </div>
-                        {/* <div className='flex w-full  space-between'>
-                            <div className='w-1/2'>
-                                <InputContainer name="address" value={item?.address} label="Address" placeholder="Address" onChange={(e) => changeInput(e)} />
-                            </div>
-                            <div className='w-1/2'>
-                                <InputContainer name="city" value={item?.city} required label="city" placeholder="city" onChange={(e) => changeInput(e)} />
-                            </div>
-                        </div> */}
+
                         <div className='flex w-full  space-between'>
                             <div className='w-1/2'>
                                 <InputContainer name="phone" value={item?.phone} type="numeric" required label="phone" placeholder="phone" onChange={(e) => changeInput(e)} />
@@ -184,11 +186,12 @@ function Patients() {
                                     label="Gender"
                                     placeholder="Start typing Dept Name"
                                     options={[
+                                        { label: '', value: 'Select gender' },
                                         { label: 'Male', value: 'male' },
                                         { label: 'Female', value: 'female' },
                                         { label: 'Unwilling to disclose', value: 'Unwilling to disclose' },
                                     ]}
-                                    // value={item.userId}
+
                                     onChange={(e) => {
                                         setitem((prevState) => ({
                                             ...prevState,

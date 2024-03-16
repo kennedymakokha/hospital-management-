@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import bcrypt from 'bcryptjs'
 const Schema = mongoose.Schema;
 const PatientSchema = new Schema({
-   
+
     user_id: { type: Schema.Types.ObjectId, ref: 'user' },
     gender: { type: String },
     dob: { type: Date },
@@ -11,6 +11,12 @@ const PatientSchema = new Schema({
     deletedAt: { type: Date, default: null },
     nextVisit: { type: Date, default: null, },
     password: { type: String, required: true },
+    createdBy: { type: Schema.Types.ObjectId, ref: 'user' },
+    state: {
+        type: String,
+        enum: ['registered', 'triage', 'consultation', 'lab','review','phamacy']
+        // default:""
+    },
 }, { timestamps: true });
 PatientSchema.pre('save', async function (next) {
     if (!this.isModified('password')) {

@@ -18,7 +18,7 @@ export const usersApiSlice = apiSlice.injectEndpoints({
             })
         }),
         fetchPatients: builder.query({
-            query: () => `${USER_URL}`
+            query: (e) => `${USER_URL}?${e}`
         }),
         fetchPatientsByID: builder.query({
             query: (id) => `${USER_URL}/${id}`

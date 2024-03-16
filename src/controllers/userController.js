@@ -9,8 +9,8 @@ import generateToken from "../utils/generateToken.js";
 
 
 const authUser = expressAsyncHandler(async (req, res) => {
-    const { email, password, ID_no } = req.body;
-    const user = await User.findOne({ $or: [{ email }, { ID_no }] }).populate('role', 'name')
+    const { email, password } = req.body;
+    const user = await User.findOne({ $or: [{ email }, { ID_no:email }] }).populate('role', 'name')
     if (user && (await user.matchPassword(password))) {
         let token = generateToken(res, user._id)
 
@@ -43,22 +43,23 @@ const registerUser = expressAsyncHandler(async (req, res) => {
         throw new Error('User Already Exists')
     }
     let role = await Role.findOne({ name: req.body.role })
+    
     req.body.role = role._id
-    req.body.createdBy = req.user._id
+    req.body.createdBy = req?.user?._id
     let user = await User.create(req.body)
     if (user) {
         generateToken(res, user._id)
-        res.status(201).json({
+        return res.status(201).json({
             id: user._id,
             name: user.name,
             email: user.email,
             phone: user.phone
         })
     } else {
-        res.status(400)
+        return res.status(400)
         throw new Error("Invalid User Data")
     }
-    res.status(200).json({ message: 'register User' })
+    return res.status(200).json({ message: 'register User' })
 })
 const getUserProfile = expressAsyncHandler(async (req, res) => {
     const user = {
@@ -67,12 +68,23 @@ const getUserProfile = expressAsyncHandler(async (req, res) => {
         email: req.user.email,
         phone: req.user.phone
     }
-    res.status(200).json(user)
+    return res.status(200).json(user)
 })
 const getUsers = expressAsyncHandler(async (req, res) => {
-    const users = await User.find({})
-        .populate('role', 'name')
-    res.status(200).json(users)
+    if (req.query.searchKey) {
+        var searchKey = new RegExp(`${req.query.searchKey}`, 'i')
+        let packages = await User.find({
+            deletedAt: null, $or: [
+                { ID_no: searchKey },
+                { name: searchKey },
+                { name: searchKey }]
+        }).sort({ createdAt: -1 }).limit(100)
+        return res.status(200).json(packages);
+    } else {
+        const users = await User.find({})
+            .populate('role', 'name').sort({ createdAt: -1 }).limit(100)
+        return res.status(200).json(users)
+    }
 })
 const getroleUsers = expressAsyncHandler(async (req, res) => {
     if (req.params.role === "all") {
@@ -89,7 +101,7 @@ const getroleUsers = expressAsyncHandler(async (req, res) => {
 const getUser = expressAsyncHandler(async (req, res) => {
     const user = await User.findById(req.params.id)
         .populate('role', 'name').populate('station', 'name')
-    res.status(200).json(user)
+    return res.status(200).json(user)
 })
 const logoutUser = expressAsyncHandler(async (req, res) => {
     try {
@@ -106,7 +118,7 @@ const logoutUser = expressAsyncHandler(async (req, res) => {
             expires: new Date(0)
         })
 
-        res.status(200).json({ message: 'logged out  User' })
+        return res.status(200).json({ message: 'logged out  User' })
     } catch (error) {
         console.log(error)
     }
@@ -121,9 +133,9 @@ const EditUserDetails = expressAsyncHandler(async (req, res) => {
                 user_id: req.params.id
             })
         }
-        res.status(200).json({ message: ' successfully ', assign })
+        return res.status(200).json({ message: ' successfully ', assign })
     } catch (error) {
-        res.status(400).json({ message: ' failed ', error })
+        return res.status(400).json({ message: ' failed ', error })
     }
 })
 
@@ -132,10 +144,10 @@ const updateUserProfile = expressAsyncHandler(async (req, res) => {
     const user = await User.findById(req.user._id)
     if (user) {
         let updatte = await User.findOneAndUpdate({ _id: user._id }, req.body, { new: true, useFindAndModify: false })
-        res.status(200).json({ message: 'Updated', updatte })
+        return res.status(200).json({ message: 'Updated', updatte })
 
     } else {
-        res.status(404);
+        return res.status(404);
         throw new Error("User Not Found")
     }
 

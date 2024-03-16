@@ -28,8 +28,8 @@ function Layout(props) {
         navigate('/')
     }
     return (
-        <div className='flex h-auto  flex-col'>
-            <div className='flex h-auto '>
+        <div className='flex h-auto  min-h-screen flex-col'>
+            <div className='flex h-auto min-h-screen '>
                 <div className={`${open ? "sm:w-72 w-20" : "w-20"} duration-300 p-5 pt-8  bg-slate-600 relative`}>
                     {open ? <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor"
                         className="sm:flex hidden w-6 h-6 absolute cursor-pointer -right-3 top-9 border-2 border-primary-100  rounded-full  bg-slate-100"
@@ -92,7 +92,7 @@ function Layout(props) {
                                     </svg>
 
                                     <div className="   lg:max-w-sm">
-                                        <Dropdown title={`${userInfo?.role} ${userInfo?.name.split(' ')[1]}`}
+                                        <Dropdown title={` ${userInfo?.name}`}
                                             items={[
                                                 { title: "profile", fun: () => navigate(`/profile`) },
                                                 { separator: true, title: "Log Out", fun: () => { LogOutHandler(); console.log("Logout") } }

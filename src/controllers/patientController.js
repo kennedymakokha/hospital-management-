@@ -8,17 +8,68 @@ import Role from '../models/roleModel.js'
 
 const getPatients = expressAsyncHandler(async (req, res) => {
     try {
-        const patients = await Patient.find({ deletedAt: null }).populate('user_id', "name email phone")
 
-        return res.status(200).json(patients)
+        let rol = await Role.findById(req.user.role)
+
+        if (rol.name === "receptionist") {
+            if (req.query.searchKey) {
+                var searchKey = new RegExp(`${req.query.searchKey}`, 'i')
+                let packages = await User.find({
+                    createdBy: req.user._id,
+                    deletedAt: null, $or: [
+                        { ID_no: searchKey },
+                        { name: searchKey },
+                        { name: searchKey }]
+                }).sort({ createdAt: -1 }).limit(100)
+                return res.status(200).json(packages);
+            } else {
+                const patients = await Patient.find({ createdBy: req.user._id, deletedAt: null })
+                    .populate({
+                        path: 'user_id', select: 'name phone ID_no createdBy',
+                        populate: {
+                            path: 'createdBy',
+                            select: "name"
+                        }
+                    })
+                // .populate('user_id', "name email phone").sort({ createdAt: -1 }).limit(100)
+
+                return res.status(200).json(patients)
+            }
+
+        } else {
+            if (req.query.searchKey) {
+                var searchKey = new RegExp(`${req.query.searchKey}`, 'i')
+                let packages = await User.find({
+                    deletedAt: null, $or: [
+                        { ID_no: searchKey },
+                        { name: searchKey },
+                        { name: searchKey }]
+                }).sort({ createdAt: -1 }).limit(100)
+                return res.status(200).json(packages);
+            } else {
+                const patients = await Patient.find({ deletedAt: null })
+                    .populate({
+                        path: 'user_id',
+                        populate: {
+                            path: 'createdBy',
+
+                            select: "-_id busNumber name"
+                        }
+                    })
+                // .populate('user_id', "name email phone").sort({ createdAt: -1 }).limit(100)
+
+                return res.status(200).json(patients)
+            }
+        }
     } catch (error) {
-        res.status(404);
+        // return res.status(404);
+        console.log(error)
         throw new Error("Fetching Failed ")
     }
 })
 const registerPatient = expressAsyncHandler(async (req, res) => {
     try {
-        const { name, phone, email, password, doc, confirm_password, ID_no } = req.body
+        const { doc,ID_no } = req.body
         const UserExists = await Patient.findOne({ ID_no })
         req.body.password = req.body.ID_no
         let DoD
@@ -33,8 +84,10 @@ const registerPatient = expressAsyncHandler(async (req, res) => {
         let role = await Role.findOne({ name: 'Patient' })
         req.body.role = role._id
         req.body.name = `${req.body?.firstName} ${req.body?.lastName}`
+        req.body.state = "registered"
         const newUser = await User.create(req.body)
         req.body.user_id = newUser._id
+        req.body.createdBy = req.user._id
         const newPatient = await Patient.create(req.body)
         await Visit.create({
             doctor_id: DoD._id, user_id: newPatient._id
@@ -85,56 +138,37 @@ const registerPatient = expressAsyncHandler(async (req, res) => {
 //             .json({ success: false, message: "operation failed ", error });
 //     }
 // });
-const authPatient = expressAsyncHandler(async (req, res) => {
-    try {
-        const { ID_no, password } = req.body;
-
-        const user = await Patient.findOne({ ID_no })
-
-        if (user && (await user.matchPassword(password))) {
-            generateToken(res, user._id)
-            let newTokens = user.tokens.push(req.body.token)
-            await Patient.findOneAndUpdate({ ID_no }, { tokens: newTokens }, { new: true, useFindAndModify: false })
-            return res.status(201).json({
-                id: user._id,
-                name: `${user.firstName} ${user.lastName}`,
-                ID_no: user.ID_no,
-                tokens: user.tokens
-            })
-        } else {
-            return res.status(401).json({ message: "" })
-
-        }
-
-    } catch (error) {
-        console.log(error)
-        res.status(400).json({ message: error.message })
-    }
-})
 
 const getpatientByID = expressAsyncHandler(async (req, res) => {
-    const user = await Patient.findById(req.params.id)
-    res.status(200).json(user)
+    const user = await Patient.findById(req.params.id).populate({
+        path: 'user_id', select: 'name phone ID_no createdBy',
+        populate: {
+            path: 'createdBy',
+            select: "name"
+        }
+    })
+
+    return res.status(200).json(user)
 })
 const updatePatient = expressAsyncHandler(async (req, res) => {
     try {
         let updates = await Patient.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true, useFindAndModify: false })
-        res.status(200).json({ message: 'Patient Updated successfully ', updates })
+        return res.status(200).json({ message: 'Patient Updated successfully ', updates })
     } catch (error) {
-        res.status(400).json({ message: 'Patient Updated failed ', updates })
+        return res.status(400).json({ message: 'Patient Updated failed ', updates })
     }
 })
 const deletePatient = expressAsyncHandler(async (req, res) => {
     try {
         let deleted = await Patient.findOneAndUpdate({ _id: req.params.id }, { deletedAt: Date() }, { new: true, useFindAndModify: false })
-        res.status(200).json({ message: 'Patient deleted successfully ', deleted })
+        return res.status(200).json({ message: 'Patient deleted successfully ', deleted })
     } catch (error) {
-        res.status(404);
+        return res.status(404);
         console.log(error)
         throw new Error("deletion Failed ")
     }
 })
 
 export {
-    getpatientByID, authPatient, getPatients, registerPatient, updatePatient, deletePatient,
+    getpatientByID, getPatients, registerPatient, updatePatient, deletePatient,
 }

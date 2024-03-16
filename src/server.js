@@ -5,6 +5,7 @@ dotenv.config()
 import connectDb from './config/db.js'
 import userRoutes from './routes/userRoutes.js'
 import patientRoutes from './routes/patientsRoutes.js'
+import medicationRoutes from './routes/medicationsRoutes.js'
 import DocHistoryRoute from './routes/dochistoryRoutes.js'
 import roleRoute from './routes/roleRoutes.js'
 import triageRoute from './routes/triageRoutes.js'
@@ -25,9 +26,10 @@ app.use(cookieParser())
 app.use('/api/users', userRoutes)
 app.use('/api/doc/history', DocHistoryRoute)
 app.use('/api/patients', patientRoutes)
+app.use('/api/medications', medicationRoutes)
 app.use('/api/triage', triageRoute)
 app.use('/api/roles', roleRoute)
-app.use('/api/test', testRoute)
+app.use('/api/tests', testRoute)
 app.use('/api/stations', stationRoute)
 app.get('/', (req, res) => res.send("Server started"))
 app.use(notFound);

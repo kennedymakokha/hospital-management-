@@ -7,7 +7,9 @@ const symptomsSchema = new Schema({
     test_id: [
         { type: Schema.Types.ObjectId, ref: 'test' }
     ],
-    user_id: { type: Schema.Types.ObjectId, ref: 'patient' },
+    patient_id: { type: Schema.Types.ObjectId, ref: 'patient' },
+    prescription_id: { type: Schema.Types.ObjectId, ref: 'patient' },
+    createdBy: { type: Schema.Types.ObjectId, ref: 'user' },
 }, { timestamps: true });
 const symptoms = mongoose.model('symptoms', symptomsSchema);
 export default symptoms

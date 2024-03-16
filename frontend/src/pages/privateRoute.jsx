@@ -20,7 +20,7 @@ const ProtectedRoute = ({ children, roles }) => {
         if (!userInfo) {
             navigate("/");
         }
-        if (!roles.includes(userInfo.role)) {
+        if (!roles.includes(userInfo?.role)) {
             navigate("/403");
         }
 
