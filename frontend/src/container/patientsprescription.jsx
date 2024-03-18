@@ -34,7 +34,7 @@ function Patientsprescription(props) {
     }, [prescriptions])
     const submit = async () => {
         try {
-            await postSales(data?.filter(word => word?.dispenced === true))
+            await postSales(data)
             refetch()
             toast("Sales Posted Successfully")
         } catch (error) {

@@ -4,7 +4,7 @@ import React, { useEffect } from "react";
 // import { connect } from "react-redux";
 import { BrowserRouter as Router, useRoutes } from "react-router-dom";
 import Dashboard from "./pages";
-import { Users as UserPermissions, Dashboard as DashboardPermisions, appointments, accounts, consultation, triage, lab, patients } from './container/roles.json'
+import { Users as UserPermissions, Dashboard as DashboardPermisions,Pharmacist, appointments, accounts, consultation, triage, lab, patients } from './container/roles.json'
 import 'react-toastify/dist/ReactToastify.css';
 import Patients from "./pages/patients";
 import Appointment from "./pages/appointments";
@@ -26,6 +26,7 @@ import Users from "./pages/users";
 import UnAnauth from "./pages/unauth";
 import UserDetails from "./pages/userDetails";
 import Roles from "./pages/roles";
+import Pharmacy from "./pages/pharmacy";
 
 const { VITE_APP_VAPID_KEY } = import.meta.env;
 const App = () => {
@@ -52,6 +53,9 @@ const App = () => {
       </ProtectedRoute>} />
       <Route exact path='/user-roles' element={<ProtectedRoute roles={patients}>
         <Roles />
+      </ProtectedRoute>} />
+      <Route exact path='/pharmacy' element={<ProtectedRoute roles={Pharmacist}>
+        <Pharmacy />
       </ProtectedRoute>} />
       <Route exact path='/users/:name' element={<ProtectedRoute roles={UserPermissions}>
         <UserDetails />

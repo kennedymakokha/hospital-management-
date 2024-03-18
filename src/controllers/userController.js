@@ -9,57 +9,64 @@ import generateToken from "../utils/generateToken.js";
 
 
 const authUser = expressAsyncHandler(async (req, res) => {
-    const { email, password } = req.body;
-    const user = await User.findOne({ $or: [{ email }, { ID_no:email }] }).populate('role', 'name')
-    if (user && (await user.matchPassword(password))) {
-        let token = generateToken(res, user._id)
+    try {
+     
+        const { email, password } = req.body;
+        const user = await User.findOne({ $or: [{ email: email }, { ID_no: email }] }).populate('role', 'name')
+        if (user && (await user.matchPassword(password))) {
+            let token = generateToken(res, user._id)
+            await Duty.create({ token: req.body.token, user_id: user._id, role_id: user.role._id, start: Date(Date.now()) })
+            await User.findOneAndUpdate({ $or: [{ email }, { ID_no: email }] }, { onduty: true }, { new: true, useFindAndModify: false })
+            user.tokens.push(req.body.token)
+            await User.findOneAndUpdate({ $or: [{ email }, { ID_no: email }] }, { tokens: user.tokens }, { new: true, useFindAndModify: false })
+            return res.status(201).json({
+                id: user._id,
+                name: user.name,
+                token: token,
+                email: user.email,
+                role: user?.role?.name,
+                onduty: user.onduty,
+                tokens: user.tokens
+            })
 
-        await Duty.create({ token: req.body.token, user_id: user._id, role_id: user.role._id, start: Date(Date.now()) })
-        await User.findOneAndUpdate({ email }, { onduty: true }, { new: true, useFindAndModify: false })
 
-        let newTokens = user.tokens.push(req.body.token)
-        await User.findOneAndUpdate({ email }, { tokens: newTokens }, { new: true, useFindAndModify: false })
+        } else {
 
-        return res.status(201).json({
-            id: user._id,
-            name: user.name,
-            token: token,
-            email: user.email,
-            role: user?.role?.name,
-            onduty: user.onduty,
-            tokens: user.tokens
-        })
+            return res.status(401).json("Invalid email or password")
 
-
-    } else {
-        return res.status(401).json("Invalid email or password")
-
+        }
+    } catch (error) {
+        console.log(error)
     }
 })
 const registerUser = expressAsyncHandler(async (req, res) => {
-    const { name, phone, email, password, roleName, confirm_password } = req.body
-    const UserExists = await User.findOne({ email })
-    if (UserExists) {
-        throw new Error('User Already Exists')
+    try {
+        const { name, phone, email, password, roleName, confirm_password } = req.body
+        const UserExists = await User.findOne({ email })
+        if (UserExists) {
+            throw new Error('User Already Exists')
+        }
+        let role = await Role.findOne({ name: req.body.role })
+
+        req.body.role = role._id
+        req.body.createdBy = req?.user?._id
+        let user = await User.create(req.body)
+        if (user) {
+            generateToken(res, user._id)
+            return res.status(201).json({
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                phone: user.phone
+            })
+        } else {
+            return res.status(400).json(error)
+            throw new Error("Invalid User Data")
+        }
+    } catch (error) {
+        return res.status(400).json(error)
     }
-    let role = await Role.findOne({ name: req.body.role })
-    
-    req.body.role = role._id
-    req.body.createdBy = req?.user?._id
-    let user = await User.create(req.body)
-    if (user) {
-        generateToken(res, user._id)
-        return res.status(201).json({
-            id: user._id,
-            name: user.name,
-            email: user.email,
-            phone: user.phone
-        })
-    } else {
-        return res.status(400)
-        throw new Error("Invalid User Data")
-    }
-    return res.status(200).json({ message: 'register User' })
+
 })
 const getUserProfile = expressAsyncHandler(async (req, res) => {
     const user = {

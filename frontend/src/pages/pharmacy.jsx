@@ -6,21 +6,22 @@ import Button, { ButtonSM } from '../container/Button';
 import Modal from '../container/modal';
 import InputContainer, { SelectInput } from '../container/input';
 import { Link } from 'react-router-dom';
-import { PatientsTableHead } from './../data.json'
+import { DrugTableHead } from '../data.json'
 import { useFetchPatientsQuery, useCreatePatientMutation, useDeletePatientMutation, useUpdatePatientMutation } from '../features/slices/patientSlice';
 import { toast } from 'react-toastify';
 import { _calculateAge } from '../helpers';
 import { debounce } from '../helpers/debounce';
 import { useSelector } from 'react-redux';
+import { useFetchMedsQuery } from '../features/slices/drugsSlice';
 
-function Patients() {
+function Pharmacy() {
 
 
     const [showModal, setShowModal] = useState(false);
     const [searchKey, setsearchKey] = useState("");
     const [item, setitem] = useState({ firstName: "", dob: "", gender: "", lastName: "", ID_no: "", phone: '', email: "" });
     const { userInfo } = useSelector((state) => state.auth)
-    const { data, refetch, isFetching } = useFetchPatientsQuery(searchKey)
+    const { data, refetch, isFetching } = useFetchMedsQuery(searchKey)
     const [createPatient] = useCreatePatientMutation();
     const [updatePatient] = useUpdatePatientMutation();
     const [deletePatient] = useDeletePatientMutation();
@@ -75,77 +76,38 @@ function Patients() {
     return (
         <Layout>
             <TableContainer isFetching={isFetching}>
-                <TableTitle tableTitle="patients " />
+                <TableTitle tableTitle="Drugs " />
                 <div className='flex justify-between items-center m-2 '>
-                    {/* <InputContainer value={searchKey} name="name" placeholder="Search "
+                    <InputContainer value={searchKey} name="name" placeholder="Search "
                         onChange={(e) => debounce(search(e), 1000)}
-                    /> */}
+                    />
 
-                    {userInfo.role === "receptionist" && <Button
+                    {userInfo.role === "Admin" && <Button
                         icon={<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
                             <path d="M5.25 6.375a4.125 4.125 0 1 1 8.25 0 4.125 4.125 0 0 1-8.25 0ZM2.25 19.125a7.125 7.125 0 0 1 14.25 0v.003l-.001.119a.75.75 0 0 1-.363.63 13.067 13.067 0 0 1-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 0 1-.364-.63l-.001-.122ZM18.75 7.5a.75.75 0 0 0-1.5 0v2.25H15a.75.75 0 0 0 0 1.5h2.25v2.25a.75.75 0 0 0 1.5 0v-2.25H21a.75.75 0 0 0 0-1.5h-2.25V7.5Z" />
                         </svg>}
-                        primary title="New" onClick={() => { setShowModal(true) }} />}
+                        primary title="New Drug" onClick={() => { setShowModal(true) }} />}
                 </div>
                 <Table>
                     <TableHead>
-                        {userInfo.role !== "Admin" || userInfo.role !== "receptionist" ? PatientsTableHead.pop() : PatientsTableHead.map((head, i) => (<TH key={i} title={head} />))}
+                        { DrugTableHead.map((head, i) => (<TH key={i} title={head} />))}
                     </TableHead>
                     <TBody>
-                        {data?.map(person => (
-                            <tr key={person?._id}>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                    <div className="flex items-center">
+                        {data?.map((drug, i) => (
+                            <tr key={drug?._id}>
+                                <td className='w-[5px]'> <div className="text-sm  items-center justify-center flex font-medium text-gray-900 ">{i + 1}</div></td>
+                                <td className=" py-2 whitespace-nowrap">
 
-                                        <Link
-                                            to={`/patients/${person?.user_id?.name?.replace(/\s+/g, '')
-                                                }`} state={{ details: person }}
 
-                                        >
-                                            <div className="ml-4">
-                                                <div className="text-sm font-medium text-gray-900">{person?.user_id?.name}</div>
-                                                <div className="text-xs text-gray-500">{person?.user_id?.email}</div>
-                                            </div>
-                                        </Link>
-                                    </div>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                    <div className="text-sm text-gray-900">{person?.ID_no}</div>
+                                    <div className="text-sm font-medium text-gray-900">{drug?.name}</div>
 
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                    <span
-                                        className="px-2 inline-flex text-sm leading-5
-      font-semibold rounded-full "
-                                    >
-                                        {person?.user_id?.phone}
-                                    </span>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                    <span
-                                        className="px-2 inline-flex text-sm leading-5
-      font-semibold rounded-full "
-                                    >
-                                        {person?.gender}
-                                    </span>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                    <span
-                                        className="px-2 inline-flex text-sm leading-5
-      font-semibold rounded-full "
-                                    >
-                                        {_calculateAge(person?.dob)}
-                                    </span>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    {moment().format('YYYY-MM-DD')}
-                                </td>
-                                {userInfo.role === "receptionist" ? <td className="px-6 py-4 whitespace-nowrap  flex  gap-x-1 text-sm font-medium">
+                                {userInfo.role === "Admin" ? <td className="px-6 py-2 whitespace-nowrap  flex  gap-x-1 text-sm font-medium">
                                     <div className="text-indigo-600 hover:text-indigo-900">
-                                        <ButtonSM primary title="Edit" onClick={() => { setitem(person); setShowModal(true); }} height={2} width={8} />
+                                        <ButtonSM primary title="Edit" onClick={() => { setitem(drug); setShowModal(true); }} height={2} width={8} />
                                     </div>
                                     <div className="text-indigo-600 hover:text-indigo-900">
-                                        <ButtonSM danger title="Delete" onClick={() => { deleteHandler(person?._id); }} height={2} width={8} />
+                                        <ButtonSM danger title="Delete" onClick={() => { deleteHandler(drug?._id); }} height={2} width={8} />
                                     </div>
                                 </td> : <td></td>}
                             </tr>
@@ -159,7 +121,7 @@ function Patients() {
                 item={item}
                 submit={submit}
                 buttontitle={item?._id !== undefined && item?._id !== null && item?._id !== "" ? `Update` : "Save"}
-                title={item?._id !== undefined && item?._id !== null && item?._id !== "" ? `Edit ${item.firstName} ${item.lastName}` : "Patients General Data"}
+                title={item?._id !== undefined && item?._id !== null && item?._id !== "" ? `Edit ${item.name} ` : "New Drug"}
                 body={
                     <form className="bg-gray-200 shadow-md rounded px-8 pt-6 pb-8 w-full">
                         <div className='flex w-full  space-between'>
@@ -219,4 +181,4 @@ function Patients() {
     )
 }
 
-export default Patients
+export default Pharmacy

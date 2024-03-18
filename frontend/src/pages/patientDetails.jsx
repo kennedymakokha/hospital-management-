@@ -97,7 +97,7 @@ function PatientDetails() {
                     </div>
                 </div>
             </div>
-            <Patientsprescription _id={details._id} />
+           {userInfo.role === "pharmacist" &&  <Patientsprescription _id={details._id} />}
             {userInfo.role !== "pharmacist" && <div className='w-full flex-col flex h-[200px] '>
                 <TitleContainer title="Triage Info" />
                 <div className='flex  w-full '>

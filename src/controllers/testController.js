@@ -78,6 +78,7 @@ const postPresscriptions = expressAsyncHandler(async (req, res) => {
                 drug_id: req.body.drugs[index].drug_id,
                 patient_id: req.body.patient_id,
                 LabTest_id: req.body.labTest_id,
+                prescription_id: presciption._id,
                 dosage: req.body.drugs[index].dosage,
                 createdBy: req.user._id
             }
@@ -91,18 +92,33 @@ const postPresscriptions = expressAsyncHandler(async (req, res) => {
 })
 const postSales = expressAsyncHandler(async (req, res) => {
     try {
-        
-        for (let index = 0; index < req.body.length; index++) {
+
+        // for (let index = 0; index < req.body.length; index++) {
+        //     let body = {
+        //         drug_id: req.body[index].drug_id._id,
+        //         patient_id: req.body[index].patient_id,
+        //         LabTest_id: req.body[index].labTest_id,
+        //         price: req.body[index].price,
+        //         createdBy: req.user._id
+        //     }
+        //     await Sales.create(body)
+        //     console.log(req.body[index].LabTest_id)
+        //     await PatientDrug.findOneAndUpdate({ LabTest_id: req.body[index].LabTest_id }, { dispenced: false }, { new: true, useFindAndModify: false })
+        // }
+        req.body.forEach(async element => {
             let body = {
-                drug_id: req.body[index].drug_id._id,
-                patient_id: req.body[index].patient_id,
-                LabTest_id: req.body[index].labTest_id,
-                price: req.body[index].price,
+                drug_id: element.drug_id._id,
+                patient_id: element.patient_id,
+                LabTest_id: element.labTest_id,
+                price: element.price,
                 createdBy: req.user._id
             }
             await Sales.create(body)
-            await PatientDrug.findOneAndUpdate({ LabTest_id: req.body[index].LabTest_id }, { dispenced: true }, { new: true, useFindAndModify: false })
-        }
+            // console.log(element.LabTest_id)
+            let v = await PatientDrug.findOneAndUpdate({ prescription_id: element.prescription_id }, { dispenced: true }, { new: true, useFindAndModify: false })
+            console.log("Updated", v)
+        });
+     
         return res.status(200).json({ message: 'Created Successfull' })
     } catch (error) {
         console.log(error)

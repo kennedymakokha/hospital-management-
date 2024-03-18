@@ -8,6 +8,7 @@ const userdrugSchema = new Schema({
     dosage: { type: String },
     patient_id: { type: Schema.Types.ObjectId, ref: 'patient' },
     LabTest_id: { type: Schema.Types.ObjectId, ref: 'lab_results' },
+    prescription_id: { type: Schema.Types.ObjectId, ref: 'prescription' },
     dispenced: { type: Boolean, default: false },
     createdBy: { type: Schema.Types.ObjectId, ref: 'user' },
 }, { timestamps: true });
