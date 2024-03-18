@@ -25,7 +25,7 @@ function Users() {
     ])
     const [item, setitem] = useState({ name: "", ID_no: "", phone: '', email: "", role: "" });
     const { data, refetch, isFetching } = useGetusersQuery({})
-    const { data:roles } = useFetchRolesQuery()
+    const { data: roles } = useFetchRolesQuery()
     let users = []
     if (filter !== "") {
         users = data?.filter(word => word?.role?.name === filter)
@@ -63,8 +63,7 @@ function Users() {
             }
 
         } catch (error) {
-            console.log(error)
-            toast("error creating User ")
+            toast(error?.data?.message || error.message)
         }
     }
     const handleTab = (title) => {
@@ -74,7 +73,7 @@ function Users() {
                 let v = { ...tab, state: true }
                 newTab.push(v)
                 setFilter(tab.value)
-                return v; 
+                return v;
             }
             else {
                 let v = { ...tab, state: false }
@@ -99,7 +98,7 @@ function Users() {
 
     return (
         <Layout>
-           <TableContainer isFetching={isFetching}>
+            <TableContainer isFetching={isFetching}>
                 <div className='flex items-center justify-center'>
                     <TableTitle tableTitle={filter === "" ? " All system users" : filter} />
                 </div>
@@ -112,11 +111,11 @@ function Users() {
                     primary title="New" onClick={() => { setShowModal(true) }} /></div>
 
                 <Table>
-                          
+
                     <TableHead>
                         {UserTableHead.map((head, i) => (<TH key={i} title={head} />))}
                     </TableHead>
-                    
+
                     <TBody>
                         {users?.map(person => (
                             <tr key={person._id}>
@@ -139,12 +138,12 @@ function Users() {
                                     <div className="text-sm text-gray-900">{person.ID_no}</div>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
-                                <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full " >
+                                    <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full " >
                                         {person?.phone}
                                     </span>
                                 </td>
-                               
-                               
+
+
                                 <td className="px-6 py-4 whitespace-nowrap  flex:wrap flex   gap-x-1 text-sm font-medium">
                                     <div className="text-indigo-600 hover:text-indigo-900">
                                         <ButtonSM primary title="Edit" onClick={() => { setitem(person); setShowModal(true); }} height={2} width={8} />

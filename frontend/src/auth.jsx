@@ -50,6 +50,7 @@ function Auth(props) {
 
             }
         } catch (error) {
+           
             toast.error(error?.data?.message || error.message)
 
         }
@@ -189,7 +190,7 @@ function Auth(props) {
                                     </div>
 
                                 </div>
-                                
+
                                 <div className='w-1/2 h-full  sm:flex hidden  items-center  justify-center p-3 '>
                                     <img src={logo1} className='w-full h-full' alt="" />
                                 </div>

@@ -10,7 +10,7 @@ import generateToken from "../utils/generateToken.js";
 
 const authUser = expressAsyncHandler(async (req, res) => {
     try {
-     
+
         const { email, password } = req.body;
         const user = await User.findOne({ $or: [{ email: email }, { ID_no: email }] }).populate('role', 'name')
         if (user && (await user.matchPassword(password))) {
@@ -32,11 +32,12 @@ const authUser = expressAsyncHandler(async (req, res) => {
 
         } else {
 
-            return res.status(401).json("Invalid email or password")
+            return res.status(401).json({ message: "Invalid email or password" })
 
         }
     } catch (error) {
-        console.log(error)
+        return res.status(401).json({ message: "Invalid email or password" })
+
     }
 })
 const registerUser = expressAsyncHandler(async (req, res) => {
@@ -44,27 +45,18 @@ const registerUser = expressAsyncHandler(async (req, res) => {
         const { name, phone, email, password, roleName, confirm_password } = req.body
         const UserExists = await User.findOne({ email })
         if (UserExists) {
-            throw new Error('User Already Exists')
+            return res.status(401).json({ message: "User Exists" })
         }
         let role = await Role.findOne({ name: req.body.role })
 
         req.body.role = role._id
         req.body.createdBy = req?.user?._id
-        let user = await User.create(req.body)
-        if (user) {
-            generateToken(res, user._id)
-            return res.status(201).json({
-                id: user._id,
-                name: user.name,
-                email: user.email,
-                phone: user.phone
-            })
-        } else {
-            return res.status(400).json(error)
-            throw new Error("Invalid User Data")
-        }
+        await User.create(req.body)
+
     } catch (error) {
-        return res.status(400).json(error)
+
+        return res.status(401).json({ message: error.message })
+
     }
 
 })
